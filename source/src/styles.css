@@ -3688,3 +3688,4 @@ td.ph-name small { display: block; margin-left: 24px; font-size: 12px; color: #5
 /* 11/24 使用者：公佈欄表頭藍色底線調細為 1px */ .au-bulletin th, .au-bulletin thead th { border-bottom: 0; box-shadow: inset 0 -1px 0 #004da1; }
 /* 11/24 使用者：版2-1 車票與頁尾之間留白，不要蓋到頁尾 */ .pv3o1:not(.pv22) .pv2-main { padding-bottom: 28px; }
 @media (max-height: 800px) { .pv3o1:not(.pv22) .pv2-main { padding-bottom: 20px; } .pv3o1:not(.pv22) .pv2-hero { height: 266px; } }
+/* 11/24 移除「[示範調整] D 類工程」後，按鈕與清單之間留間距 */ .dz-content > .dz-btn + .dz-table { margin-top: 16px; }

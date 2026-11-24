@@ -232,8 +232,7 @@ export default function AuditDisburse({ onDetail, demo }) {
         <div className="dz-body">
           <SideActs collapsed={sideMini} onCollapse={() => setSideMini(!sideMini)} items={[[addAlt16, '開始登錄作業', addNew]]} more={[]} />
           <div className="dz-content">
-            <button type="button" className="dz-btn" onClick={() => demo('工程動支請示')}>工程動支請示</button>
-            <button type="button" className="dz-tlink" onClick={() => setFlt({ cat: 'D' })}>[示範調整] D 類工程</button>
+            <button type="button" className="dz-btn" onClick={() => demo('非工程動支請示')}>非工程動支請示</button>
             <section className="dz-table">
               <header><span>({shown.length ? 1 : 0} - {shown.length}/{shown.length})</span>
                 <div>
