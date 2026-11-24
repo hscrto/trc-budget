@@ -33,6 +33,7 @@ import { authService } from './services/authService.js';
 import { store } from './services/storage.js';
 import { useHashRoute, navigate } from './useHashRoute.js';
 import AtieChat from './components/AtieChat.jsx'; // 11/19 首頁右下角 AI 模擬對話：阿鐵
+import AuditHome from './pages/AuditHome.jsx'; // 11/20 審核會計模組示意畫面
 
 const isNarrow = () => window.matchMedia('(max-width: 960px)').matches;
 
@@ -90,7 +91,7 @@ function Shell({ user, route: pageRoute, onLogout }) {
   const { recordVisit } = usePrefs();
   const node = getNode(route);
 
-  // 最近打開：本系統頁面在換頁時記錄；開啟外部系統由 aa:visit 事件記錄
+  // 最近打開：本系統頁面在換頁時記錄；開啟外部模組由 aa:visit 事件記錄
   useEffect(() => { if (node && visible(node)) recordVisit(route); }, [route]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     const on = (e) => recordVisit(e.detail);
@@ -114,7 +115,8 @@ function Shell({ user, route: pageRoute, onLogout }) {
           {/* 首頁版1 不顯示上方頁籤（11/10） */}
           {/* 11/12 使用者：所有內頁的上排頁籤移除（TabBar 元件保留） */}
           {/* 11/19 使用者：首頁三版寬度隨畫面調整（不限 1320px），寬螢幕右側不再留白 */}
-          <div className={`content ${isHomeVariant ? 'is-home' : ''}`}>
+          {/* 11/24 使用者：各類預算編列（#bf-*）與明細表（#rd:）的工作簿也隨畫面寬度放大，不留白 */}
+          <div className={`content ${isHomeVariant || /^(bf-|rd:)/.test(pageRoute) ? 'is-home' : ''}`}>
             {isHomeVariant ? (
               <div className="crumb-row"><Breadcrumb route={route} /><HomeThemeToggle /></div>
             ) : <Breadcrumb route={route} />}
@@ -155,7 +157,7 @@ export default function App() {
   const logout = async () => { await authService.logout(); setUser(null); window.location.hash = ''; };
 
   if (!user) {
-    // 登入後進入系統入口（Portal）；若網址帶有頁面代碼（#bm-01 等）就直接停在那一頁
+    // 登入後進入模組入口（Portal）；若網址帶有頁面代碼（#bm-01 等）就直接停在那一頁
     return <LoginPage onLogin={(u) => { setUser(u); if (!window.location.hash) navigate('portal'); }} />;
   }
   return (
@@ -163,29 +165,34 @@ export default function App() {
       <PrefsProvider user={user} key={user.id}>
         <MessagesProvider user={user}>
         <SessionProvider user={user} onTimeout={logout}>
-        {/* Portal 版本（11/12 再調整順序）：#portal＝版1 簡約風、#portal-v2＝版2 待審核筆數、#portal-v3＝版3 特色列車、#portal-v4＝版4 系統總覽；舊網址 #portal-v5 導向版2 */}
-        {route === 'portal-news-admin' ? (
+        {route === 'audit' && perm.can('sys-audit') ? (
+          // 11/20 使用者：審核會計模組第一頁（示意）
+          <AuditHome user={user} onLogout={logout} />
+        ) : route === 'portal-news-admin' ? (
           // 11/16：Portal 公告管理（管理者）
           <PortalNewsAdmin user={user} onLogout={logout} />
-        // 11/19 使用者：版3、版3-1、版6 每 2 秒換一張（版5 維持 4 秒）
-        ) : route === 'portal-v3' ? (
+        // 11/24 使用者：版號調整——#portal＝版1-1、#portal-v1-2、#portal-v2-1、#portal-v2-2（新）、#portal-v2-3、#portal-v3 特色車站、#portal-v4 模組總覽
+        ) : route === 'portal-v2-3' || route === 'portal-v2' ? (
+          // 版2-3 特色列車（原版2；舊網址 #portal-v2 導到這裡）；每 2 秒換一張
           <PortalTrains user={user} onLogout={logout} className="pv3t" interval={2000} />
-        ) : route === 'portal-v3-1' ? (
-          // 11/19 使用者：版3-1＝版3 縮小前的樣式（上方列車插圖篇幅較大，高 420px、滿版）
-          <PortalTrains user={user} onLogout={logout} current="portal-v3-1" className="pv3o1" interval={2000} />
-        ) : route === 'portal-v6' ? (
-          // 11/16：版6 早期車票（版5＋早期車票底紋的乘車證）
-          <PortalStationsTicket user={user} onLogout={logout} />
-        ) : route === 'portal-v5' ? (
-          // 11/16：版5 特色車站（版3 列車概念 → 臺灣特色車站，Blender 風格插圖）
+        ) : route === 'portal-v2-2' ? (
+          // 版2-2：上半部套用版2-1（大圖＋公告輪播）＋版1 的入口卡片
+          <PortalTrains user={user} onLogout={logout} current="portal-v2-2" className="pv3o1 pv22" interval={2000} entry="cards" heroNews />
+        ) : route === 'portal-v2-1' ? (
+          // 版2-1：大圖、公告輪播取代問候
+          <PortalTrains user={user} onLogout={logout} current="portal-v2-1" className="pv3o1" interval={2000} heroNews />
+        ) : route === 'portal-v3' ? (
+          // 版3 特色車站（與版4 交換）
           <PortalStations user={user} onLogout={logout} />
         ) : route === 'portal-v4' ? (
+          // 版4 模組總覽
           <PortalWorkspace user={user} onLogout={logout} />
-        ) : route === 'portal-v2' || route === 'portal-v5' ? (
+        ) : route === 'portal-v1-2' ? (
+          // 版1-2：版1-1 藍底＋乘車證，移除問候
+          <PortalPage user={user} onLogout={logout} variant="v2-1" />
+        ) : route === 'portal' || /^portal-v/.test(route) || !perm.can(`sys-${APP_CONFIG.currentSystem}`) ? (
+          // 版1-1 我待審筆數；舊網址（#portal-v1-1、#portal-v5 等）導回這裡
           <PortalPage user={user} onLogout={logout} variant="v5" />
-        ) : route === 'portal' || !perm.can(`sys-${APP_CONFIG.currentSystem}`) ? (
-          // 版1「簡約風」（11/12：原版1 刪除，原版4「加入公告」改名簡約風、改為版1）
-          <PortalPage user={user} onLogout={logout} />
         ) : (
           <Shell user={user} route={route} onLogout={logout} />
         )}

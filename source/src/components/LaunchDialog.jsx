@@ -3,7 +3,7 @@ import Icon from './Icon.jsx';
 import { APP_CONFIG, currentSystem, systemUrl } from '../config/appConfig.js';
 import { toast } from './Notification.jsx';
 
-// 開啟外部系統前的提示：告訴使用者要去哪裡、本系統會留在背景
+// 開啟外部模組前的提示：告訴使用者要去哪裡、本系統會留在背景
 export default function LaunchDialog() {
   const [node, setNode] = useState(null);
   const openBtn = useRef(null);

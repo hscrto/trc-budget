@@ -90,7 +90,7 @@ export default function PortalNewsAdmin({ user, onLogout }) {
         <div className="na-head">
           <div>
             <h1>公告管理</h1>
-            <p className="muted">新增、修改 Portal 與各系統訊息中心的公告。可設定發布時間（排程）與下架時間；排程時間到了會自動出現在 Portal。</p>
+            <p className="muted">新增、修改 Portal 與各模組訊息中心的公告。可設定發布時間（排程）與下架時間；排程時間到了會自動出現在 Portal。</p>
             <p className="na-perm">
               <span className={`na-permtag ${can('news-admin') ? 'on' : ''}`}>{can('news-admin') ? '✓' : '✕'} 管理</span>
               <span className={`na-permtag ${canPub ? 'on' : ''}`}>{canPub ? '✓' : '✕'} 發布</span>

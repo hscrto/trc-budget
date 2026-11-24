@@ -175,14 +175,14 @@ export function PlaceholderPage({ node }) {
       <div className="placeholder">
         <Icon name="grid" size={28} />
         <strong>內容區</strong>
-        <p>之後可放置：引導說明、篩選條件、資料表格、圖表，或嵌入其他系統畫面。</p>
+        <p>之後可放置：引導說明、篩選條件、資料表格、圖表，或嵌入其他模組畫面。</p>
         <code>功能代碼：{node.id}</code>
       </div>
     </>
   );
 }
 
-// 嵌入其他系統：iframe 或 API
+// 嵌入其他模組：iframe 或 API
 export function EmbedPage({ node }) {
   const { embed } = node;
   const sys = APP_CONFIG.systems[embed.system] || { name: embed.system };

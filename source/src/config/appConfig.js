@@ -1,16 +1,16 @@
 // ─────────────────────────────────────────────────────────────
 // 全域設定：部署時主要改這個檔案
-// 會計系統（AA）= 預算系統 + 審核會計系統，共用 SSO 登入
+// 會計系統（AA）= 預算模組 + 審核會計模組，共用 SSO 登入
 // ─────────────────────────────────────────────────────────────
 export const APP_CONFIG = {
   suiteName: '臺鐵會計系統',
   companyName: '國營臺灣鐵路股份有限公司',
   version: 'Prototype 1109-C',
 
-  // 目前這套前端是哪一個子系統（Portal 與頂列「切換系統」會標示為目前所在）
+  // 目前這套前端是哪一個子系統（Portal 與頂列「切換模組」會標示為目前所在）
   currentSystem: 'budget',
 
-  // 'mock' = 模擬資料（prototype）；'live' = 連接 TM1 / 外部系統 API
+  // 'mock' = 模擬資料（prototype）；'live' = 連接 TM1 / 外部模組 API
   dataMode: 'mock',
 
   // 系統註冊表：Portal 入口、頂列切換、嵌入（embed）、開啟（launch）都從這裡組網址
@@ -18,17 +18,19 @@ export const APP_CONFIG = {
   //   portal   有填 = 出現在 Portal 與頂列切換選單（依 order 排序）
   //              icon / desc / accent（卡片色條）
   //   openIn   'new' = 新視窗（預設，使用者 11/09 確認）；'same' = 同一視窗
-  //   建置平台只記在註解（畫面不顯示平台，使用者 11/10 決定）：Portal、預算系統＝PAW；審核會計系統、BI＝Maximo MAS 9
+  //   建置平台只記在註解（畫面不顯示平台，使用者 11/10 決定）：Portal、預算模組＝PAW；審核會計模組、BI＝Maximo MAS 9
   //   internal true = 就是這套前端本身（進入時直接到本系統首頁）
   // 之後 Portal 要擴充入口，只要在這裡新增一筆並給 portal 設定
   systems: {
     budget: {
-      name: '預算系統', url: './', internal: true,
+      name: '預算模組', url: './', internal: true,
       portal: { order: 1, icon: 'clipboard', accent: '#00529c', desc: '預算編列、審查、報部與各階段審議作業' },
     },
     audit: {
-      name: '審核會計系統', url: 'https://audit.trc.example/', // TODO：正式網址
-      openIn: 'new', open: false, // 11/17 使用者：尚未開放的系統禁止點擊（開放後改為 true）
+      name: '審核會計模組', url: 'https://audit.trc.example/', // TODO：正式網址
+      openIn: 'new', open: true, // 11/17 使用者：尚未開放的模組禁止點擊（開放後改為 true）
+      // 11/20 使用者：先做一層示意畫面（#audit）假裝可以打開；正式串接後拿掉 mockRoute，改開 url
+      mockRoute: 'audit',
       portal: { order: 2, icon: 'shield', accent: '#1a2d65', desc: '會計審核、傳票與帳務作業' },
     },
     bi: {
@@ -41,7 +43,7 @@ export const APP_CONFIG = {
   },
 
   launch: {
-    confirm: true, // true = 開啟外部系統前先顯示提示視窗
+    confirm: true, // true = 開啟外部模組前先顯示提示視窗
   },
 
   // 登入：mock = 測試帳號；sso = 導向 SSO，回來後呼叫 userInfoUrl 取得使用者與角色
@@ -71,7 +73,7 @@ export function systemUrl(systemId, path = '') {
 
 // 系統是否已開放（open: false＝尚未開放，Portal 與切換選單都不能點）
 export const isSystemOpen = (id) => APP_CONFIG.systems[id]?.open !== false;
-export const CLOSED_HINT = '系統建置中，尚未開放';
+export const CLOSED_HINT = '模組建置中，尚未開放';
 
 // Portal／切換選單的入口（依 order 排序）
 export const portalSystems = () =>

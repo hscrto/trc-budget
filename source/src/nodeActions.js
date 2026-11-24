@@ -2,7 +2,7 @@ import { navigate } from './useHashRoute.js';
 import { toast } from './components/Notification.jsx';
 import { APP_CONFIG, systemUrl } from './config/appConfig.js';
 
-// 開啟外部系統：交給 LaunchDialog 顯示提示；不需提示時直接開新視窗
+// 開啟外部模組：交給 LaunchDialog 顯示提示；不需提示時直接開新視窗
 export function requestLaunch(node) {
   if (!APP_CONFIG.launch.confirm) {
     const { system, path } = node.launch;
@@ -27,7 +27,7 @@ export const nodeLinkProps = (node, after) => ({
   onClick: (e) => { e.preventDefault(); openNode(node); after?.(); },
 });
 
-// 在新視窗開啟預算系統的某一頁（Portal 上的連結一律開新視窗）
+// 在新視窗開啟預算模組的某一頁（Portal 上的連結一律開新視窗）
 // 預覽環境若封鎖彈出視窗，改在原視窗開啟
 // 預覽頁是嵌在框架裡（iframe）：新視窗打不開框架內的網址，所以預覽時改在原視窗切換
 const inPreviewFrame = () => { try { return window.self !== window.top; } catch { return true; } };
@@ -44,11 +44,12 @@ export function openBudgetPage(route = 'home') {
   if (!w) navigate(route);
 }
 
-// 切換系統（Portal 卡片、頂列切換選單）：一律開新視窗
+// 切換模組（Portal 卡片、頂列切換選單）：一律開新視窗
 export function switchSystem(id) {
   const sys = APP_CONFIG.systems[id];
-  if (!sys || sys.open === false) return; // 尚未開放的系統不能進入
+  if (!sys || sys.open === false) return; // 尚未開放的模組不能進入
   if (sys.internal) { openBudgetPage('home'); return; }
+  if (sys.mockRoute) { openBudgetPage(sys.mockRoute); return; } // 11/20：審核會計模組示意畫面
   const url = systemUrl(id, '/');
   // 預覽時先顯示提示（網址為示意）；正式環境直接切換
   if (APP_CONFIG.dataMode === 'mock') {

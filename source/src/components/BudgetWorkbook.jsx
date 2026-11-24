@@ -3,7 +3,7 @@
 //   版面依現行填表畫面：上方工具列、左側可收合的表清單（公告、區段、選取資產）、
 //   表內像 Excel 一樣的頁籤、黃底輸入／灰底計算的試算表。
 //   外觀採 Maximo MAS 9 的 Carbon 風格（工具列、頁籤、手風琴清單、焦點框），
-//   讓預算系統與審核會計系統的操作感受一致。
+//   讓預算模組與審核會計模組的操作感受一致。
 //   資料：Prototype 存在瀏覽器（localStorage aa.wb.v1｜填表單位｜表），正式環境寫回預算工作區。
 // ─────────────────────────────────────────────────────────────
 import { Fragment, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
@@ -40,8 +40,6 @@ import tableSplit16 from '@carbon/icons/es/table--split/16.js';
 import chev16 from '@carbon/icons/es/chevron--down/16.js';
 import chartLine16 from '@carbon/icons/es/chart--line/16.js';
 import docImport16 from '@carbon/icons/es/document--import/16.js';
-import zoomIn16 from '@carbon/icons/es/zoom--in/16.js';
-import zoomOut16 from '@carbon/icons/es/zoom--out/16.js';
 import column16 from '@carbon/icons/es/column/16.js';
 import dashboard20 from '@carbon/icons/es/dashboard/20.js';
 import book16 from '@carbon/icons/es/book/16.js';
@@ -145,7 +143,30 @@ function computeSheet(sheet, getRaw, ctx) {
 }
 
 // ───────────── 主元件 ─────────────
-export default function BudgetWorkbook({ title, workbook, who, unit, readOnly = false, deadline, banner, iconTile, panelBody, noPanel = false }) {
+// 11/24 使用者：段看各室、處看各段時，不拆各室進度，直接看彙整後的總額。
+//   sources＝要彙整的填表單位；數字欄相加，文字欄取第一個有填的；
+//   空白列（b1、b2…，例如出國計畫逐筆填寫）依來源順序往下排，不互相疊加。
+export function aggregateSaved(maps) {
+  const out = {}; const blankNext = {}; const blankMap = {};
+  maps.forEach((m, si) => {
+    Object.entries(m || {}).forEach(([key, val]) => {
+      const [sh, row, col] = key.split('|');
+      let k = key;
+      if (col !== undefined && /^b\d+$/.test(row)) {
+        const id = `${si}|${sh}|${row}`;
+        if (!blankMap[id]) { blankNext[sh] = (blankNext[sh] || 0) + 1; blankMap[id] = `b${blankNext[sh]}`; }
+        k = `${sh}|${blankMap[id]}|${col}`;
+      }
+      if (typeof val === 'number' && Number.isFinite(val)) out[k] = (typeof out[k] === 'number' ? out[k] : 0) + val;
+      else if (out[k] === undefined || out[k] === '') out[k] = val;
+    });
+  });
+  return out;
+}
+
+// 11/24：彙整檢視切換預算單位時工作簿會重新載入，記住目前的表與頁籤，切換後停在原處
+const VIEW_MEMO = {};
+export default function BudgetWorkbook({ title, workbook, who, unit, readOnly = false, deadline, banner, iconTile, panelBody, noPanel = false, sources = null, keepView = false }) {
   const sections = workbook.sections;
   const allAssets = sections.flatMap((s) => s.assets);
   const rootRef = useRef(null);
@@ -155,12 +176,14 @@ export default function BudgetWorkbook({ title, workbook, who, unit, readOnly = 
   const [openSec, setOpenSec] = useState(() => new Set(sections.filter((s) => s.open).map((s) => s.id)));
   const [noticeOpen, setNoticeOpen] = useState(true);
   const [noticeIdx, setNoticeIdx] = useState(0);
-  const [assetId, setAssetId] = useState(allAssets[0]?.id);
-  const [tabOf, setTabOf] = useState({}); // 每張表目前的頁籤
+  const memo = keepView ? VIEW_MEMO[title] : null;
+  const [assetId, setAssetId] = useState(memo?.assetId && allAssets.some((a) => a.id === memo.assetId) ? memo.assetId : allAssets[0]?.id);
+  const [tabOf, setTabOf] = useState(memo?.tabOf || {}); // 每張表目前的頁籤
+  useEffect(() => { if (keepView) VIEW_MEMO[title] = { assetId, tabOf }; }, [keepView, title, assetId, tabOf]);
   const [drafts, setDrafts] = useState({}); // 未儲存的輸入 { 表: { key: 值 } }
   const [savedMap, setSavedMap] = useState({}); // 已儲存 { 表: { v, at } }
   const [hist, setHist] = useState({}); // 復原／取消復原 { 表: { undo: [], redo: [] } }
-  const [zoom, setZoom] = useState(100);
+  const zoom = 100; // 11/24 固定 100%，不提供縮放
   const [headers, setHeaders] = useState(false);
   const [full, setFull] = useState(false);
   const [fieldsOpen, setFieldsOpen] = useState(false);
@@ -179,9 +202,21 @@ export default function BudgetWorkbook({ title, workbook, who, unit, readOnly = 
 
   const asset = allAssets.find((a) => a.id === assetId) || allAssets[0];
   const skey = (a) => `aa.wb.v1|${who}|${a}`;
-  const saved = (a) => savedMap[a] ?? local.get(skey(a), null) ?? { v: {}, at: 0 };
-  useEffect(() => { // 讀取已儲存的內容
-    setSavedMap((m) => (m[asset?.id] ? m : { ...m, [asset?.id]: local.get(skey(asset?.id), null) || { v: {}, at: 0 } }));
+  // 彙整模式：每個來源先補上樣板預設數字（沒改過的格子也算進總額），再相加
+  const defaultsOf = (a) => {
+    const d = {};
+    (allAssets.find((x) => x.id === a)?.sheets || []).forEach((sh) => (sh.grid?.rows || []).forEach((r) => {
+      if (r.match) return;
+      Object.entries(r.v || {}).forEach(([k, v]) => { if (typeof v === 'number') d[`${sh.id}|${r.id}|${k}`] = v; });
+    }));
+    return d;
+  };
+  const load = (a) => (sources
+    ? { v: aggregateSaved(sources.map((w) => ({ ...defaultsOf(a), ...(local.get(`aa.wb.v1|${w}|${a}`, null)?.v || {}) }))), at: Math.max(0, ...sources.map((w) => local.get(`aa.wb.v1|${w}|${a}`, null)?.at || 0)) }
+    : local.get(skey(a), null) || { v: {}, at: 0 });
+  const saved = (a) => savedMap[a] ?? load(a);
+  useEffect(() => { // 讀取已儲存的內容（彙整模式：讀各來源後加總）
+    setSavedMap((m) => (m[asset?.id] ? m : { ...m, [asset?.id]: load(asset?.id) }));
   }, [asset?.id, who]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // 高度：填滿視窗，不讓整頁捲動（表格在工作簿內捲動）
@@ -294,7 +329,7 @@ export default function BudgetWorkbook({ title, workbook, who, unit, readOnly = 
       toast({ kind: 'success', title: '已匯出', subtitle: filename });
     })();
   };
-  const resetView = () => { setZoom(100); setHeaders(false); setCollapsed(new Set()); setFilter(''); toast({ kind: 'info', title: '已重設檢視', subtitle: '縮放、欄列標題、展開狀態與篩選已還原。' }); };
+  const resetView = () => { setHeaders(false); setCollapsed(new Set()); setFilter(''); toast({ kind: 'info', title: '已重設檢視', subtitle: '欄列標題、展開狀態與篩選已還原。' }); };
 
   // 鍵盤：Ctrl+S 儲存、Ctrl+Z 復原、Ctrl+Y 取消復原
   useEffect(() => {
@@ -392,9 +427,7 @@ export default function BudgetWorkbook({ title, workbook, who, unit, readOnly = 
                 : <span className="wb-ok muted">尚未修改</span>}
         </div>
         <div className="wb-tright">
-          <button type="button" className="wb-tbtn sm" onClick={() => setZoom(Math.max(60, zoom - 10))} aria-label="縮小" data-tip="縮小"><I d={zoomOut16} /></button>
-          <button type="button" className="wb-zoom" onClick={() => setZoom(100)} data-tip="恢復 100%">{zoom}%</button>
-          <button type="button" className="wb-tbtn sm" onClick={() => setZoom(Math.min(150, zoom + 10))} aria-label="放大" data-tip="放大"><I d={zoomIn16} /></button>
+          {/* 11/24 使用者：移除縮放（不讓使用者調整比例），工作簿外框隨畫面寬度調整 */}
           <button type="button" className={`wb-fields-btn ${fieldsOpen ? 'is-on' : ''}`} onClick={() => setFieldsOpen(!fieldsOpen)} aria-expanded={fieldsOpen}>
             欄位 <I d={column16} />
           </button>
@@ -579,7 +612,12 @@ function Sheet({ sheet, sheets, cur, ctx, getRaw, setCell, readOnly, unit, zoom,
                   <tr key={f.label}>
                     <th scope="row">{f.label}：</th>
                     <td>
-                      {f.unit ? <span className="wb-fixed">{val}</span> : (
+                      {/* 11/24 使用者：彙整檢視可在「預算單位名稱」直接下拉切換單位（不另外放篩選器） */}
+                      {f.unit === 'name' && unit?.options?.length > 1 ? (
+                        <select className="wb-unitpick" value={unit.pick ?? unit.name} onChange={(e) => unit.onPick(e.target.value)} aria-label={f.label}>
+                          {unit.options.map((o) => <option key={o} value={o}>{o}</option>)}
+                        </select>
+                      ) : f.unit ? <span className="wb-fixed">{val}</span> : (
                         <select value={val ?? ''} onChange={(e) => setCell(key, e.target.value)} disabled={readOnly} aria-label={f.label}>
                           {opts.map((o) => <option key={o} value={o}>{o || '（請選擇）'}</option>)}
                         </select>

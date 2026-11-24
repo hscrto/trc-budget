@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// 審查計畫頁（預算審查設定Plan › 費用明細表／收入明細表，11/18 使用者，依 PAW Plans 畫面）
+// 審查計畫頁（預算審查設定 › 費用明細表／收入明細表，11/18 使用者，依 PAW Plans 畫面）
 //   頁首：計畫名稱、計劃狀態、天剩餘、檢視計劃、計劃動作、新增作業
 //   頁籤：概觀（監視計劃＋時間表）、作業（卡片，可展開、摘要、更多動作）、工作流程（可拖拉的畫布）、公告
 //   公告：與 Portal 的公告串聯——有權限編輯這張明細表的人，可以在這裡針對新增／調整的內容發布公告，
@@ -588,7 +588,7 @@ function News({ planId, plan, user }) {
         <button type="button" className="pl-icon" aria-label="搜尋" onClick={() => setSearching(!searching)}><I d={searchI} /></button>
         <button type="button" className="pl-primary sm" onClick={() => setEditor({})}>建立 <I d={add} /></button>
       </div>
-      <p className="pl-news-note">這裡發布的公告會同步顯示在 Portal「最新公告」與訊息中心（標記為預算系統），Portal 的公告管理也可以看到並管理。</p>
+      <p className="pl-news-note">這裡發布的公告會同步顯示在 Portal「最新公告」與訊息中心（標記為預算模組），Portal 的公告管理也可以看到並管理。</p>
       {!list.length ? (
         <div className="pl-empty">
           <svg width="72" height="80" viewBox="0 0 72 80" aria-hidden="true"><path d="M36 4 68 20v36L36 72 4 56V20z" fill="#e0e0e0" /><path d="M36 4 68 20 36 36 4 20z" fill="#f4f4f4" /><path d="M36 36v36L4 56V20z" fill="#c6c6c6" /><rect x="10" y="26" width="8" height="5" fill="#fff" opacity=".8" /></svg>

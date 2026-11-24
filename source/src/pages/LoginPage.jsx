@@ -57,7 +57,7 @@ export default function LoginPage({ onLogin }) {
           <img src={emblemWhite} alt="" className="login-emblem" />
           <h2>{APP_CONFIG.suiteName}</h2>
           <p className="login-brand-en">Accounting System</p>
-          <p className="login-brand-desc">單一登入，進入所有會計相關系統</p>
+          <p className="login-brand-desc">單一登入，進入所有會計相關模組</p>
         </div>
       </section>
 
@@ -65,7 +65,7 @@ export default function LoginPage({ onLogin }) {
         <form className="login-card" onSubmit={submit} noValidate>
           <img src={logoFull} alt="臺鐵公司 Taiwan Railway" className="login-logo" />
           <h1>{APP_CONFIG.suiteName}</h1>
-          <p className="login-sub">請使用您的個人帳號登入，登入後選擇要進入的系統</p>
+          <p className="login-sub">請使用您的個人帳號登入，登入後選擇要進入的模組</p>
 
           <label className="field">
             <span>帳號</span>

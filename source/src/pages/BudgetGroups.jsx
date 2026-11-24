@@ -239,6 +239,9 @@ export function GroupFillPage({ node }) {
   const [sec, setSec] = useState(sections[0] || '');
   const rooms = roomsOf(sec);
   const [room, setRoom] = useState('');
+  // 11/24 使用者：會計處看各營業處（處）的總額，可切換檢視哪一個處
+  const BIZ_DEPTS = Object.keys(SECTIONS_OF).filter((d) => d !== '會計處' && (SECTIONS_OF[d] || []).length);
+  const [dept, setDept] = useState(BIZ_DEPTS[0] || '');
   const [q, setQ] = useState('');
   const [st, setSt] = useState('全部');
   const [msg, setMsg] = useState('');
@@ -248,54 +251,48 @@ export function GroupFillPage({ node }) {
 
   const deadline = <span><Icon name="clock" size={14} /> 填表期限 {DEADLINE}，期限到系統自動鎖定，不需要按提交。</span>;
 
-  // 處以上：看不到各室所填的預算表
-  if (!['室', '段', '管理者'].includes(level)) {
+  // 11/24 使用者：段看各室、營業處（會計處以外的處）看各段時，不拆各室進度，直接看彙整後的總額
+  const myDept = orgUnit(user?.dept || '');
+  const isAcct = level === '會計處';
+  const isBizDept = (level === '處' && myDept !== '會計處') || isAcct;
+  const wbOf = () => WORKBOOKS[group.id] || genericWorkbook(group, tableById);
+  const tileOf = <span className="wb-tile" style={{ '--tile': WB_COLOR[group.id] || '#004DA1' }}><Icon name={WB_ICON[group.id] || 'form'} size={20} /></span>;
+  if (level === '段' || isAdmin || isBizDept) {
+    const bizScope = isAcct ? dept : myDept;
+    const secs = isBizDept ? (SECTIONS_OF[bizScope] || []) : [sec];
+    const srcs = secs.flatMap((sc) => roomsOf(sc).map((r) => `${sc} ${r}`));
+    const scope = isBizDept ? bizScope : sec;
+    const scopeUnit = unitByName(scope);
+    return (
+      <BudgetWorkbook
+        key={`${group.id}|agg|${scope}`}
+        title={group.name}
+        workbook={wbOf()}
+        who={`${scope}（彙整）`}
+        sources={srcs}
+        unit={{
+          code: scopeUnit?.code || '', name: scopeUnit?.name || scope, pick: scope,
+          // 11/24 使用者：會計處切換營業處、管理者切換段，改在表內「預算單位名稱」下拉
+          options: isAcct ? BIZ_DEPTS : isAdmin ? ALL_SECTIONS : null,
+          onPick: (n) => (isAcct ? setDept(n) : setSec(n)),
+        }}
+        keepView
+        readOnly
+        deadline={`填表期限 ${DEADLINE}，期限到自動鎖定，不需要提交`}
+        iconTile={tileOf}
+        // 11/24 使用者：「彙整檢視：○○ 所屬…的總額（唯讀）」提醒移除（工具列仍顯示唯讀）
+      />
+    );
+  }
+
+  // 總公司：看不到各室所填的預算表（11/24 起會計處改為看各營業處總額）
+  if (level !== '室') {
     return (
       <>
         <PageTitle node={node} desc={<span className="bf-desc">{deadline}</span>} />
         <div className="bf-msg bf-block"><Icon name="lock" size={16} />
-          <span>各室填寫的預算表只有該室與所屬段看得到。{level === '處' ? '處' : level}級請在「我的待辦」查看{level === '處' ? '所屬各段' : level === '會計處' ? '各處' : '上一層'}提交的明細表。</span>
+          <span>各室填寫的預算表只有該室、所屬段與所屬處看得到。{level}請在「我的待辦」查看{level === '會計處' ? '各處' : '上一層'}提交的明細表。</span>
           <a className="link-btn" {...nodeLinkProps(getNode('review-plan'))}>前往我的待辦</a>
-        </div>
-      </>
-    );
-  }
-
-  // 段（與管理者）：先看所屬各室的填寫進度，點室再看該室的表
-  if (level !== '室' && !room) {
-    const list = rooms.map((r) => { const rs = rowsFor(group, `${sec} ${r}`); return { r, rs, done: countOf(rs, '已填寫') }; });
-    return (
-      <>
-        <PageTitle node={node} desc={(
-          <span className="bf-desc">{deadline}
-            <span>檢視所屬各室填寫的內容；期限到各室自動鎖定後，由段彙整成明細表提交給處。</span>
-          </span>
-        )} />
-        {isAdmin && (
-          <label className="bf-pick">檢視單位（管理者）
-            <select value={sec} onChange={(e) => setSec(e.target.value)}>{ALL_SECTIONS.map((x) => <option key={x}>{x}</option>)}</select>
-          </label>
-        )}
-        <div className="table-card">
-          <div className="table-meta"><span>{sec}・{rooms.length} 個室・本分類 {group.tables.length} 張表</span></div>
-          <div className="table-scroll">
-            <table className="data-table bg-table">
-              <thead><tr><th>室</th><th className="num">已填寫</th><th className="num">填寫中</th><th className="num">未填寫</th><th>進度</th><th /></tr></thead>
-              <tbody>
-                {list.map(({ r, rs, done }) => (
-                  <tr key={r}>
-                    <td className="strong">{r}</td>
-                    <td className="num">{done}</td>
-                    <td className="num">{countOf(rs, '填寫中')}</td>
-                    <td className="num">{countOf(rs, '未填寫')}</td>
-                    <td><span className="bf-bar"><i style={{ width: `${rs.length ? (done / rs.length) * 100 : 0}%` }} /></span> {rs.length ? Math.round((done / rs.length) * 100) : 0}%</td>
-                    <td className="bf-act"><button type="button" className="link-btn" onClick={() => setRoom(r)}>檢視 <Icon name="arrowRight" size={14} /></button></td>
-                  </tr>
-                ))}
-                {!list.length && <tr><td colSpan={6} className="muted bg-empty">沒有所屬的室</td></tr>}
-              </tbody>
-            </table>
-          </div>
         </div>
       </>
     );

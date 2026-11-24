@@ -6,8 +6,9 @@ import { isSystemOpen, CLOSED_HINT } from '../config/appConfig.js';
 import { navigate } from '../useHashRoute.js';
 import { usePerm } from '../permissions.jsx';
 
-// 頂列「切換系統」：滑鼠滑過（或點擊）展開，項目來自 Portal 入口設定
-export default function SystemSwitcher() {
+// 頂列「切換模組」：滑鼠滑過（或點擊）展開，項目來自 Portal 入口設定
+// 11/23：審核會計模組示意畫面也使用，current 指定目前所在系統
+export default function SystemSwitcher({ current: currentId = APP_CONFIG.currentSystem }) {
   const { can } = usePerm();
   const [open, setOpen] = useState(false);
   const timer = useRef(null);
@@ -38,7 +39,7 @@ export default function SystemSwitcher() {
     >
       <button className="sys-switch" aria-haspopup="true" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
         <Icon name="swap" size={17} />
-        <span>切換系統</span>
+        <span>切換模組</span>
         <Icon name="chevronDown" size={14} className={`sw-chev ${open ? 'open' : ''}`} />
       </button>
 
@@ -46,7 +47,7 @@ export default function SystemSwitcher() {
         <div className="switcher-panel" role="menu">
           <div className="switcher-title">切換至</div>
           {items.map((s) => {
-            const current = s.id === APP_CONFIG.currentSystem;
+            const current = s.id === currentId;
             const closed = !current && !isSystemOpen(s.id);
             return (
               <button

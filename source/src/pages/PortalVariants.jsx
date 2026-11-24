@@ -40,7 +40,7 @@ import { switchSystem, requestLaunch, openBudgetPage } from '../nodeActions.js';
 import { usePerm } from '../permissions.jsx';
 import { dataService } from '../services/dataService.js';
 import { SessionTimer } from '../session.jsx';
-import { PortalNews } from './PortalPage.jsx';
+import { PortalNews, HeroNews, PortalCards } from './PortalPage.jsx';
 
 // ─────────────────────────────────────────────────────────────
 // Portal 三版比較（內部參考用）：#portal = 版1、#portal-v2、#portal-v3
@@ -48,13 +48,16 @@ import { PortalNews } from './PortalPage.jsx';
 // ─────────────────────────────────────────────────────────────
 // 11/12 整理為四版：原版1 刪除；原版4（加入公告）改名簡約風成為版1；待審核筆數移到版2，其他順延
 export const PORTAL_VERSIONS = [
-  { id: 'portal', label: '版1', title: '簡約風' },
-  { id: 'portal-v2', label: '版2', title: '我待審筆數' },
-  { id: 'portal-v3', label: '版3', title: '特色列車' },
-  { id: 'portal-v3-1', label: '版3-1', title: '特色列車' },
-  { id: 'portal-v4', label: '版4', title: '系統總覽' },
-  { id: 'portal-v5', label: '版5', title: '特色車站' },
-  { id: 'portal-v6', label: '版6', title: '早期車票' },
+  // 11/24 使用者：刪除原版1（簡約風）、原版6（早期車票），其他依序重新編號：
+  //   原版2→版1、原版2-1→版1-1、原版3→版2、原版3-1→版2-1、原版4→版3、原版5→版4
+  // 11/24 下午：版1→版1-1、版1-1→版1-2；版2-1 不動、原版2→版2-3、新增版2-2（版2 的底＋版1 入口卡片）；版3、版4 交換
+  { id: 'portal', label: '版1-1', title: '我待審筆數' },
+  { id: 'portal-v1-2', label: '版1-2', title: '車票入口' },
+  { id: 'portal-v2-1', label: '版2-1', title: '特色列車' },
+  { id: 'portal-v2-2', label: '版2-2', title: '特色列車' },
+  { id: 'portal-v2-3', label: '版2-3', title: '特色列車' },
+  { id: 'portal-v3', label: '版3', title: '特色車站' },
+  { id: 'portal-v4', label: '版4', title: '模組總覽' },
 ];
 
 export function PortalVersionSwitcher({ current }) {
@@ -123,7 +126,7 @@ export const TRAINS = [
 // 系統 ↔ 列車主題（可自由調整）
 const TRAIN_OF = { budget: 'sun', audit: 'sea', bi: 'blue' };
 // 11/16 使用者：乘車證移除「車種」，改用號誌燈顯示系統狀態——綠燈「已進站」＝系統正常可用；紅燈「即將進站」＝系統尚未完成
-//   目前審核會計系統、BI 還沒設計好，所以是即將進站。正式環境可改由各系統的健康檢查 API 決定。
+//   目前審核會計模組、BI 還沒設計好，所以是即將進站。正式環境可改由各模組的健康檢查 API 決定。
 // 11/17：改依 appConfig 的 open 設定（open: false＝尚未開放，卡片與車票不能點）
 const STATION_OF = new Proxy({}, { get: (_, id) => (isSystemOpen(id) ? 'in' : 'soon') });
 const closedProps = (id) => (isSystemOpen(id) ? {} : { disabled: true, 'aria-disabled': true, title: CLOSED_HINT });
@@ -139,7 +142,51 @@ const BRAND_OF = {
 const BRAND_SEQ = [BRAND_OF.budget, BRAND_OF.audit, BRAND_OF.bi];
 
 // 版2（11/12 追加）：乘車證顯示待審核筆數（同版4，BI 不顯示）；下方加最新公告（同版1）。重要時程 11/12 全部版本移除
-export function PortalTrains({ user, onLogout, slides = TRAINS, current = 'portal-v3', kicker = '臺鐵特色列車', dotsLabel = '特色列車', credit = '示意插圖・正式版改用臺鐵官網列車照片', className = '', paper = false, hoverPause = true, interval = 4000 }) {
+// 版3 的橫式乘車證（11/20 抽出成元件，版3／版3-1／版2-1 共用）
+export function BoardingTickets({ items, pending }) {
+  return (
+  <div className="pv2-tickets">
+    {items.map((s, i) => {
+      return (
+        <button key={s.id} className={`ticket ${isSystemOpen(s.id) ? '' : 'is-closed'}`} {...closedProps(s.id)} style={{ '--c1': (BRAND_OF[s.id] || BRAND_SEQ[i % 3]).c1, '--ink': (BRAND_OF[s.id] || BRAND_SEQ[i % 3]).ink }} onClick={() => switchSystem(s.id)}>
+          <span className="ticket-body">
+            <span className="ticket-top">
+              <span>臺鐵會計系統・乘車證</span>
+              <span className="ticket-no">No. {String(i + 1).padStart(3, '0')}</span>
+            </span>
+            <span className="ticket-route">
+              <span className="ticket-st"><small>起站</small>系統入口</span>
+              <span className="ticket-arrow"><Icon name="arrowRight" size={20} /></span>
+              <span className="ticket-st to"><small>迄站</small>{s.name}</span>
+            </span>
+            <span className="ticket-desc">{s.portal.desc}</span>
+            <span className="ticket-meta">
+              <span><small>狀態</small>
+                <span className={`ticket-light ${STATION_OF[s.id] || 'soon'}`} title={STATION_OF[s.id] === 'in' ? '系統正常，可以使用' : '模組建置中，尚未開放'}>
+                  <i aria-hidden="true" />{STATION_LABEL[STATION_OF[s.id] || 'soon']}
+                </span>
+              </span>
+              <span><small>月台</small>第 {i + 1} 月台</span>
+            </span>
+          </span>
+          <span className="ticket-stub">
+            {/* 待審核筆數（同版5；BI 不顯示，維持系統圖示） */}
+            {pending?.[s.id] ? (
+              <span className={`ticket-pending ${pending[s.id].count ? '' : 'zero'}`} aria-label={`${pending[s.id].label} ${pending[s.id].count}`}>
+                <b>{pending[s.id].count}</b>
+                <small>{pending[s.id].label}</small>
+              </span>
+            ) : <span className="ticket-ico"><Icon name={s.portal.icon} size={28} /></span>}
+            {/* 11/20 使用者：版2-1、版3、版3-1 車票移除「登車」字樣與圖示 */}
+          </span>
+        </button>
+      );
+    })}
+  </div>
+  );
+}
+
+export function PortalTrains({ user, onLogout, slides = TRAINS, current = 'portal-v2-3', kicker = '臺鐵特色列車', dotsLabel = '特色列車', credit = '示意插圖・正式版改用臺鐵官網列車照片', className = '', paper = false, hoverPause = true, interval = 4000, heroNews = false, entry = 'tickets' }) {
   // paper：'classic'＝版5 原設計紙本車票；'pattern'＝版6 早期車票底紋
   const items = useSystems();
   const { can } = usePerm();
@@ -174,7 +221,8 @@ export function PortalTrains({ user, onLogout, slides = TRAINS, current = 'porta
         ))}
         <div className="pv2-hero-text">
           <p className="pv2-kicker">{kicker}・{cur.en}</p>
-          <h1>{user.name}，您好</h1>
+          {/* 11/23 使用者：版3-1 公告輪播取代「XXX，您好」的位置 */}
+          {heroNews ? (can('home-news') && <HeroNews />) : <h1>{user.name}，您好</h1>}
           <p className="pv2-train"><b>{cur.name}</b>　{cur.slogan}</p>
           <p className="pv2-note">{cur.note}</p>
         </div>
@@ -192,7 +240,7 @@ export function PortalTrains({ user, onLogout, slides = TRAINS, current = 'porta
       </section>
 
       <main className="portal-inner pv2-main" aria-label="系統入口">
-        <h2 className="pv2-h2">請選擇您的目的地 <small>系統將於新視窗開啟</small></h2>
+        <h2 className="pv2-h2">請選擇您的目的地 <small>模組將於新視窗開啟</small></h2>
         {/* 11/16 使用者：版5／版6 要一頁呈現不捲動——車票與最新公告左右並排 */}
         {paper ? (
           <div className="pt-layout">
@@ -202,48 +250,12 @@ export function PortalTrains({ user, onLogout, slides = TRAINS, current = 'porta
         ) : null}
         {/* 11/16 使用者：版6 公告改到車票下方（同版2） */}
         {paper === 'pattern' && can('home-news') && <div className="pt-below"><PortalNews inline /></div>}
-        {paper ? null : (
-        <div className="pv2-tickets">
-          {items.map((s, i) => {
-            return (
-              <button key={s.id} className={`ticket ${isSystemOpen(s.id) ? '' : 'is-closed'}`} {...closedProps(s.id)} style={{ '--c1': (BRAND_OF[s.id] || BRAND_SEQ[i % 3]).c1, '--ink': (BRAND_OF[s.id] || BRAND_SEQ[i % 3]).ink }} onClick={() => switchSystem(s.id)}>
-                <span className="ticket-body">
-                  <span className="ticket-top">
-                    <span>臺鐵會計系統・乘車證</span>
-                    <span className="ticket-no">No. {String(i + 1).padStart(3, '0')}</span>
-                  </span>
-                  <span className="ticket-route">
-                    <span className="ticket-st"><small>起站</small>系統入口</span>
-                    <span className="ticket-arrow"><Icon name="arrowRight" size={20} /></span>
-                    <span className="ticket-st to"><small>迄站</small>{s.name}</span>
-                  </span>
-                  <span className="ticket-desc">{s.portal.desc}</span>
-                  <span className="ticket-meta">
-                    <span><small>狀態</small>
-                      <span className={`ticket-light ${STATION_OF[s.id] || 'soon'}`} title={STATION_OF[s.id] === 'in' ? '系統正常，可以使用' : '系統建置中，尚未開放'}>
-                        <i aria-hidden="true" />{STATION_LABEL[STATION_OF[s.id] || 'soon']}
-                      </span>
-                    </span>
-                    <span><small>月台</small>第 {i + 1} 月台</span>
-                  </span>
-                </span>
-                <span className="ticket-stub">
-                  {/* 待審核筆數（同版5；BI 不顯示，維持系統圖示） */}
-                  {pending?.[s.id] ? (
-                    <span className={`ticket-pending ${pending[s.id].count ? '' : 'zero'}`} aria-label={`${pending[s.id].label} ${pending[s.id].count}`}>
-                      <b>{pending[s.id].count}</b>
-                      <small>{pending[s.id].label}</small>
-                    </span>
-                  ) : <span className="ticket-ico"><Icon name={s.portal.icon} size={28} /></span>}
-                  <span className="ticket-go">登車 <Icon name="launch" size={16} /></span>
-                </span>
-              </button>
-            );
-          })}
-        </div>
-        )}
+        {/* 11/24 使用者：版2-2＝版2 的底，入口改用版1 的卡片 */}
+        {paper ? null : entry === 'cards' ? (
+          <div className="portal-grid pv22-cards"><PortalCards items={items} pending={pending} withPending /></div>
+        ) : <BoardingTickets items={items} pending={pending} />}
       </main>
-      {!paper && can('home-news') && <PortalNews />}
+      {!paper && !heroNews && can('home-news') && <PortalNews />}
 
       <footer className="portal-foot">© {APP_CONFIG.companyName}・{APP_CONFIG.version}</footer>
     </div>
@@ -252,7 +264,7 @@ export function PortalTrains({ user, onLogout, slides = TRAINS, current = 'porta
 
 // ═════════════════════════════════════════════════════════════
 // 版3：工作台（以「要做的事」為中心，而非先選系統）
-// 左側系統 Dock、上方全站搜尋、中間今日重點 + 跨系統待辦 + 快速開始、右側公告與系統狀態
+// 左側系統 Dock、上方全站搜尋、中間今日重點 + 跨模組待辦 + 快速開始、右側公告與系統狀態
 // ═════════════════════════════════════════════════════════════
 function GlobalSearch({ extra = [] }) {
   const { visible } = usePerm();
@@ -264,7 +276,7 @@ function GlobalSearch({ extra = [] }) {
     .map((x) => x.node)
     .filter((n) => n.label && n.id !== 'home' && !n.placeholder && visible(n)), [visible]);
   const pool = useMemo(() => [
-    ...all.map((n) => ({ key: n.id, label: n.label, where: `預算系統 › ${getTrail(n.id).slice(0, -1).map((x) => x.label).join(' › ') || '首頁'}`, go: () => openBudgetPage(n.id) })),
+    ...all.map((n) => ({ key: n.id, label: n.label, where: `預算模組 › ${getTrail(n.id).slice(0, -1).map((x) => x.label).join(' › ') || '首頁'}`, go: () => openBudgetPage(n.id) })),
     ...extra.filter((x) => isSystemOpen(x.sysId)).map((x) => ({ key: `${x.sysId}-${x.path}`, label: x.label, where: APP_CONFIG.systems[x.sysId]?.name, go: () => openIn(x.sysId, x) })),
   ], [all, extra]);
   const hits = q.trim()
@@ -282,7 +294,7 @@ function GlobalSearch({ extra = [] }) {
       <Icon name="search" size={20} />
       <input
         value={q}
-        placeholder="搜尋各系統功能，例如：資本支出、傳票審核、儀表板"
+        placeholder="搜尋各模組功能，例如：資本支出、傳票審核、儀表板"
         aria-label="搜尋功能"
         onChange={(e) => { setQ(e.target.value); setOpen(true); setHi(0); }}
         onFocus={() => setOpen(true)}
@@ -313,15 +325,16 @@ function GlobalSearch({ extra = [] }) {
 export { PortalOverview as PortalWorkspace };
 
 // ═════════════════════════════════════════════════════════════
-// 版3：系統總覽（11/10 改版）
-// 不先選系統、也不重複預算系統首頁：每個系統一欄，列出該系統的摘要筆數（11/12：只放筆數，重要事項移除）、常用功能，
-// 下方為最新公告（11/12：重要時程移除，改放公告）。審核會計系統、BI 的內容需 MAS 9 提供 API（目前為示意資料）。
+// 版3：模組總覽（11/10 改版）
+// 不先選系統、也不重複預算模組首頁：每個系統一欄，列出該系統的摘要筆數（11/12：只放筆數，重要事項移除）、常用功能，
+// 下方為最新公告（11/12：重要時程移除，改放公告）。審核會計模組、BI 的內容需 MAS 9 提供 API（目前為示意資料）。
 // ═════════════════════════════════════════════════════════════
 
-// 開啟某系統內的功能（一律新視窗）：預算系統用頁面代碼；其他系統用路徑
+// 開啟某系統內的功能（一律新視窗）：預算模組用頁面代碼；其他模組用路徑
 function openIn(sysId, it) {
   if (!isSystemOpen(sysId)) return; // 尚未開放
   if (it.route) { openBudgetPage(it.route); return; }
+  if (APP_CONFIG.systems[sysId]?.mockRoute) { openBudgetPage(APP_CONFIG.systems[sysId].mockRoute); return; } // 11/20 審核會計模組示意畫面
   const sys = APP_CONFIG.systems[sysId];
   requestLaunch({ id: `${sysId}-${it.path}`, label: it.label || it.title, launch: { system: sysId, path: it.path, title: `${sys.name}：${it.label || it.title}` } });
 }
@@ -341,19 +354,20 @@ export function PortalOverview({ user, onLogout }) {
 
   return (
     <div className="portal pv3o">
-      <header className="pv3-top">
-        <img src={logoFull} alt="國營臺灣鐵路股份有限公司" className="pv3-logo" />
+      {/* 11/20 使用者：最上面的 bar 全面改為 #004DA1（版4 原本是白底彩色 Logo） */}
+      <header className="pv3-top is-blue">
+        <img src={emblemWhite} alt="臺鐵公司" className="brand-emblem" />
         <span className="pv3o-suite">{APP_CONFIG.suiteName}</span>
         <GlobalSearch extra={extra} />
-        <UserChip user={user} onLogout={onLogout} dark={false} />
+        <UserChip user={user} onLogout={onLogout} />
       </header>
       <PortalVersionSwitcher current="portal-v4" />
 
       <main className="pv3o-main">
         <div className="pv3o-head">
           <div>
-            <h1>系統總覽</h1>
-            <p>{dateStr}・各系統摘要{data?.updatedAt ? `（資料時間 ${data.updatedAt}）` : ''}</p>
+            <h1>模組總覽</h1>
+            <p>{dateStr}・各模組摘要{data?.updatedAt ? `（資料時間 ${data.updatedAt}）` : ''}</p>
           </div>
         </div>
 
@@ -430,7 +444,7 @@ export const STATIONS = [
 ];
 export function PortalStations(props) {
   return (
-    <PortalTrains {...props} slides={STATIONS} current="portal-v5" kicker="臺灣特色車站" dotsLabel="特色車站"
+    <PortalTrains {...props} slides={STATIONS} current="portal-v3" kicker="臺灣特色車站" dotsLabel="特色車站"
       credit="" className="pv5" paper="classic" />
   );
 }
@@ -501,7 +515,7 @@ export function PortalStationsTicket(props) {
   );
 }
 
-// 版5 原設計（11/16 使用者：版5 不需要剪票設計，整張車票點擊即開啟系統）：淡色厚紙、頂端系統色帶、紅框我待審、右側剪票缺口
+// 版5 原設計（11/16 使用者：版5 不需要剪票設計，整張車票點擊即開啟模組）：淡色厚紙、頂端系統色帶、紅框我待審、右側剪票缺口
 //   11/16 使用者：移除贅字（自 系統入口 ▼ 至、系統說明、當日有效、票號、日期），只留系統名稱、狀態、我待審
 const CLASSIC_OF = {
   budget: { paper: '#F4E7C3', ink: '#6B4A1F', band: '#CA8C51' },
@@ -538,7 +552,7 @@ function ClassicTickets({ items, pending }) {
 }
 
 // 11/16 使用者：版6 移除「登車」字樣，車票直接呈現已剪票（右側三角缺口）；版5 無剪票。以下 usePunch／PunchMark 目前未使用
-// 11/16 使用者：車票右側的三角形剪票口（文字「登車」）；點擊＝剪票（視同驗票），車票右側真的被剪掉一個三角缺口，點擊車票＝剪票（視同驗票），剪出三角缺口後開啟系統
+// 11/16 使用者：車票右側的三角形剪票口（文字「登車」）；點擊＝剪票（視同驗票），車票右側真的被剪掉一個三角缺口，點擊車票＝剪票（視同驗票），剪出三角缺口後開啟模組
 function usePunch() {
   const [punch, setPunch] = useState('');
   const onPunch = (id) => {

@@ -1,7 +1,7 @@
 import { portalSystems } from './appConfig.js';
 
 // ─────────────────────────────────────────────────────────────
-// 預算系統：選單與頁面結構（唯一的資料來源）
+// 預算模組：選單與頁面結構（唯一的資料來源）
 // 左側選單、上方頁籤、麵包屑、頁面、權限矩陣都從這裡產生。
 //
 // 節點欄位
@@ -15,9 +15,9 @@ import { portalSystems } from './appConfig.js';
 //   sidebarLeaf true = 左側選單不展開子項目
 //
 // 頁面類型（三選一，都不填 = 本系統頁面）
-//   embed   { kind: 'iframe', system, path, title }   嵌入其他系統畫面
+//   embed   { kind: 'iframe', system, path, title }   嵌入其他模組畫面
 //           { kind: 'api', system, endpoint, title }  用 API 讀取資料後顯示
-//   launch  { system, path, title }                   在新視窗開啟其他系統，本系統留在背景
+//   launch  { system, path, title }                   在新視窗開啟其他模組，本系統留在背景
 //   page    特殊頁面代碼（例如 'roles'）
 // ─────────────────────────────────────────────────────────────
 export const SITE_MAP = [
@@ -57,9 +57,9 @@ export const SITE_MAP = [
   //   子項目＝各分類（由 config/budgetGroups.js 依「各類預算編列」的維護結果產生），網址 #bf-分類代碼
   { id: 'budget-fill', label: '預算編列', icon: 'form', sidebar: false, children: [] },
   {
-    // 預算編列維護App（11/12 下午再改為縮寫：Application → App；：原「預算審查作業」→「預算審查維護」→「預算編列維護」→ 加註 PAW 對照名稱）
+    // 預算編列維護（11/12 下午再改為縮寫：Application → App；：原「預算審查作業」→「預算審查維護」→「預算編列維護」→ 加註 PAW 對照名稱）
     // 底下：各類預算編列（＝PAW Application）。預算表設定 11/12 移到第一層
-    id: 'budget-review', label: '預算編列維護App', icon: 'grid', menuPerm: 'menu-budget-admin', page: 'plan-home', // 11/18：與預算審查設定Plan 共用子首頁「預算編列與審查」
+    id: 'budget-review', label: '預算編列維護', icon: 'grid', menuPerm: 'menu-budget-admin', page: 'plan-home', // 11/18：與預算審查設定 共用子首頁「預算編列與審查」
     // 11/13：只有會計處以上與管理者看得到，其他人選單不顯示
     children: [
       // 各類預算編列（11/13 使用者：屬於「維護」）：會計處把 70 多張表分類成幾個分類（目前五類），
@@ -69,9 +69,9 @@ export const SITE_MAP = [
     ],
   },
   {
-    // 預算表設定R&A（11/12 下午再改為縮寫：Report & Analysis → R&A； 由「預算編列維護」底下往上提到第一層並加註 PAW 對照名稱）
+    // 預算表設定（11/12 下午再改為縮寫：Report & Analysis → R&A； 由「預算編列維護」底下往上提到第一層並加註 PAW 對照名稱）
     // 只有會計處以上的人員可以查看並使用（見 rbac.js 的「會計處以上」）
-    id: 'budget-maint', label: '預算表設定R&A', icon: 'clipboard', menuPerm: 'menu-budget-admin',
+    id: 'budget-maint', label: '預算表設定', icon: 'clipboard', menuPerm: 'menu-budget-admin',
     children: [
       // 00、01 依現有 PAW 選單（2026-11-09 參考圖）；▸ 項目的下一層待提供
       { id: 'bm-00', label: '00.基本設定維護', children: [
@@ -120,8 +120,8 @@ export const SITE_MAP = [
       // 11/17 使用者：R&A 移除 TEST
     ],
   },
-  // 預算審查設定Plan（11/12 新增，同日移到第一層；同日加註 PAW 對照名稱）：設計提交階層（室 → 段 → 處 → 會計處 → 總公司）
-  { id: 'review-setting', label: '預算審查設定Plan', icon: 'plan', menuPerm: 'menu-budget-admin', page: 'plan-home', children: [ // 11/18：共用子首頁的「審查計畫維護」頁籤
+  // 預算審查設定（11/12 新增，同日移到第一層；同日加註 PAW 對照名稱）：設計提交階層（室 → 段 → 處 → 會計處 → 總公司）
+  { id: 'review-setting', label: '預算審查設定', icon: 'plan', menuPerm: 'menu-budget-admin', page: 'plan-home', children: [ // 11/18：共用子首頁的「審查計畫維護」頁籤
     { id: 'rs-expense', label: '費用明細表', icon: 'form', page: 'plan-detail', desc: '設計費用預算的提交階層（室 → 段 → 處 → 會計處 → 總公司）。' },
     { id: 'rs-income', label: '收入明細表', icon: 'form', page: 'plan-detail', desc: '設計收入預算的提交階層（室 → 段 → 處 → 會計處 → 總公司）。' },
   ] },
@@ -129,7 +129,7 @@ export const SITE_MAP = [
     // 管理（11/12 新增為「系統管理員」；11/13 使用者：更名「管理」，底下不用子頁）
     // lockedVisible：沒有權限的人也看得到這一項，但呈現鎖定、不能點（只有管理者可以使用）
     // 11/13 使用者：只有系統管理員看得到（其他人選單不顯示，不再呈現鎖定）
-    // 11/18 使用者：「管理」底下放「群組」（User Group，Book2.xlsx；用在預算審查設定Plan 的貢獻者與核准者）
+    // 11/18 使用者：「管理」底下放「群組」（User Group，Book2.xlsx；用在預算審查設定 的貢獻者與核准者）
     id: 'sysadm', label: '管理', icon: 'settings',
     children: [
       { id: 'admin-groups', label: '群組', icon: 'user', page: 'groups' },
@@ -186,9 +186,9 @@ export const EXTRA_FEATURES = [
   ...portalSystems().map((s) => ({ id: `sys-${s.id}`, label: `系統入口：${s.name}` })),
   { id: 'home-tasks', label: '首頁：我的待辦' },
   { id: 'home-news', label: '首頁：最新公告' },
-  // 11/12：左側選單「預算編列維護App」「預算表設定R&A」「預算審查設定Plan」三項能否展開（預設只有會計處以上、管理者）
+  // 11/12：左側選單「預算編列維護」「預算表設定」「預算審查設定」三項能否展開（預設只有會計處以上、管理者）
   //   其他人在選單上看到的是鎖定（同系統管理員：不能點、不能展開），要做事從首頁或「新增」進入；頁面本身的權限不變
-  { id: 'menu-budget-admin', label: '選單：顯示 App／R&A／Plan（會計處以上）' },
+  { id: 'menu-budget-admin', label: '選單：顯示預算編列維護／預算表設定／預算審查設定（會計處以上）' },
   // 11/13：選單「新建」只給處以上（室、段的選單只有首頁、個人）
   { id: 'menu-new', label: '選單：顯示新建（處以上）' },
   // 11/16：Portal 公告管理（新增、修改、排程、下架）；預設只有管理者
@@ -207,9 +207,9 @@ export const TABS = [
     match: ['new', 'review-plan', 'budget-review', 'review-setting', 'budget-maint', 'bm-00', 'bm-01', 'bm-test'],
     actions: ['new-book', 'bm-00-version'],
     columns: [
-      { title: '預算編列維護App', links: ['budget-plan', 'review-setting', 'review-plan'] },
+      { title: '預算編列維護', links: ['budget-plan', 'review-setting', 'review-plan'] },
       { title: '各類預算編列', links: ['bp-income', 'bp-expense', 'bp-overseas', 'bp-ict', 'bp-capex'] },
-      { title: '預算表設定R&A', links: ['bm-00', 'bm-01', 'bm-test'] },
+      { title: '預算表設定', links: ['bm-00', 'bm-01', 'bm-test'] },
       { title: '01.預算概算編列', links: ['bm-01-plan', 'bm-01-income', 'bm-01-expense', 'bm-01-report'] },
     ],
     featured: 'bm-00-copy',

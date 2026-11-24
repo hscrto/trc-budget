@@ -6,7 +6,7 @@ import { APP_CONFIG } from './config/appConfig.js';
 // 登入時間＋閒置自動登出（11/10）
 //   頁面沒有任何動作（滑鼠、鍵盤、捲動、觸控）超過 idleMinutes 分鐘就自動登出
 //   最後 warnSeconds 秒跳出提醒，可按「繼續使用」
-//   同一瀏覽器開的多個視窗（Portal、預算系統）共用最後動作時間（localStorage）
+//   同一瀏覽器開的多個視窗（Portal、預算模組）共用最後動作時間（localStorage）
 // ─────────────────────────────────────────────────────────────
 const IDLE_MS = (APP_CONFIG.session?.idleMinutes ?? 30) * 60 * 1000;
 const WARN_MS = (APP_CONFIG.session?.warnSeconds ?? 60) * 1000;

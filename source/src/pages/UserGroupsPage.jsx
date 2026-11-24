@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────────
 // 群組管理（User Group；11/18 使用者：依 Book2.xlsx 的 Group／Login Id，給系統管理員維護）
-//   這些群組用在「預算審查設定Plan」各作業的貢獻者（Submitter）與核准者（Approver）
+//   這些群組用在「預算審查設定」各作業的貢獻者（Submitter）與核准者（Approver）
 //   Prototype：存在瀏覽器（config/userGroups.js）；正式環境改讀 PAW／TM1 的使用者群組
 // ─────────────────────────────────────────────────────────────
 import { useMemo, useState } from 'react';

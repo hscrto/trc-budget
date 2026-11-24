@@ -294,7 +294,7 @@ function buildTasks(user) {
 }
 
 // 11/18 批准鏈（明細表頁「簽核歷程」的流程圖）：本明細表 → 上一層 → … → 總公司
-//   目前用預設規則（上一層單位的審核人）；之後由「預算審查設定Plan」設定，改讀 Plan
+//   目前用預設規則（上一層單位的審核人）；之後由「預算審查設定」設定，改讀 Plan
 const APPROVER_TITLE = { 段: '處長', 處: '會計處審查人', 會計處: '總經理' };
 export function approvalChain(unit) {
   const out = [];
@@ -321,10 +321,10 @@ export function detailUnits(unit) {
 export const hashOf = hash;
 
 const mock = {
-  // Portal 版3「系統總覽」：各系統的摘要數字、重要事項、常用功能、重要時程
+  // Portal 版3「模組總覽」：各模組的摘要數字、重要事項、常用功能、重要時程
   // budget 可由 TM1／PAW 取得；audit、bi 需 Maximo（MAS 9）提供 API，目前為示意資料
-  // Portal 版5：各系統「待審核」筆數（11/12：審核內容尚未定義，先統一稱「待審核」、不顯示量詞；審核會計系統需 MAS 9 API，目前為示意）
-  //   預算系統＝登入者「待審」的明細表筆數
+  // Portal 版5：各模組「待審核」筆數（11/12：審核內容尚未定義，先統一稱「待審核」、不顯示量詞；審核會計模組需 MAS 9 API，目前為示意）
+  //   預算模組＝登入者「待審」的明細表筆數
   async getPendingCounts(user) {
     await delay(150);
     const rv = await mock.getMyReviewItems(user);
@@ -459,7 +459,7 @@ const mock = {
 };
 
 const live = {
-  // TODO：預算系統由 TM1 計算；審核會計系統、BI 呼叫 MAS 9 提供的摘要 API 後組成相同格式
+  // TODO：預算模組由 TM1 計算；審核會計模組、BI 呼叫 MAS 9 提供的摘要 API 後組成相同格式
   async getPortalSummary() {
     return { updatedAt: '', systems: {}, timeline: [] };
   },
@@ -471,7 +471,7 @@ const live = {
   async getFormStatus() {
     return {};
   },
-  // TODO：預算系統由 TM1／PAW Plans 取得；審核會計系統呼叫 MAS 9 API
+  // TODO：預算模組由 TM1／PAW Plans 取得；審核會計模組呼叫 MAS 9 API
   async getPendingCounts() {
     return {};
   },
@@ -499,7 +499,7 @@ const live = {
     // 可改為讀取 PAW Plans 狀態或自建的工作清單 Cube
     return [];
   },
-  // 外部系統 API：回傳 { columns, rows, updatedAt }（依各系統實際格式轉換）
+  // 外部模組 API：回傳 { columns, rows, updatedAt }（依各模組實際格式轉換）
   async fetchEmbed(embed) {
     const base = CFG.systems[embed.system]?.apiBase || '';
     const res = await fetch(base + embed.endpoint, { credentials: 'include' });

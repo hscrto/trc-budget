@@ -3090,9 +3090,9 @@ td.ph-name small { display: block; margin-left: 24px; font-size: 12px; color: #5
 .rdm-hlist small { color: #525252; font-size: 13px; }
 
 /* 11/19 出國計畫：頁籤橘色（依 PAW 截圖）、名稱建立表單、單位說明 */
-.wb-tab.tone-orange { color: #b06a2c; font-weight: 600; }
-.wb-tab.tone-orange:hover { color: #8a4f1c; border-bottom-color: #c98a4b; }
-.wb-tab.tone-orange.on { color: #fff; background: #c98a4b; border-bottom-color: #c98a4b; }
+.wb-tab.tone-orange { color: #004da1; font-weight: 600; } /* 11/24 使用者：出國計畫頁籤由土黃改藍色系 */
+.wb-tab.tone-orange:hover { color: #003a7a; border-bottom-color: #5e93ba; }
+.wb-tab.tone-orange.on { color: #fff; background: #004da1; border-bottom-color: #004da1; }
 .wb-tab.tone-orange.on .wb-ico { color: #fff; }
 .wb-nameform { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; margin: 8px 0 12px; }
 .wb-nameform .wb-fieldtbl { margin: 0; }
@@ -3211,3 +3211,480 @@ td.ph-name small { display: block; margin-left: 24px; font-size: 12px; color: #5
 /* 11/19 使用者：首頁三版隨畫面寬度調整篇幅（原本內容最寬 1320px，寬螢幕右側留白）；高螢幕時版3 三欄也跟著拉高 */
 .content.is-home { max-width: none; }
 @media (min-width: 1101px) and (min-height: 941px) { .home-v5 { --v5h: clamp(600px, calc(100vh - 300px), 1000px); } }
+
+/* ═════ 11/20 Portal 版2-1：版2 藍底＋版3 乘車證入口；移除問候、卡片上移、公告區間距 80% ═════ */
+.pv21 .portal-hero { padding: 36px 0 92px; }
+.pv21 .portal-hero p.welcome-kicker { margin-bottom: 6px; }
+.pv21-main { position: relative; z-index: 1; margin-top: -68px; flex: none; }
+.pv21-main .ticket { box-shadow: 0 8px 22px rgba(0, 36, 84, .16); }
+.pv21 .portal-news { margin-top: 19px; padding-bottom: 45px; }
+.pv21 .pn-card { padding: 3px 16px 10px; }
+.pv21 .pn-card .card-head h2 { margin: 11px 0 10px; }
+.pv21 .pn-row { padding: 10px 0; gap: 10px; }
+/* 11/20 使用者：版2-1 公告行距再縮為 80%（列 padding 10→8px、行高 1.5→1.2） */
+.pv21 .pn-row { padding: 8px 0; line-height: 1.2; }
+
+/* ═════ 11/20 審核會計系統（示意）：啟動中心、左側功能列、會計選單小幫手 ═════ */
+.au { --au-bar: #15396b; --au-blue: #0f62fe; --au-nav-w: 60px; --au-nav-open: 320px; position: fixed; inset: 0; display: flex; flex-direction: column; background: #f2f4f8; color: #161616; font-size: 14px; z-index: 5; }
+.au-ico { display: block; flex: none; }
+.au-bar { height: 60px; flex: none; display: flex; align-items: center; background: var(--au-bar); color: #fff; position: relative; z-index: 30; }
+.au-burger { width: 64px; height: 60px; display: grid; place-items: center; border: 0; background: transparent; color: #fff; cursor: pointer; }
+.au-burger:hover { background: rgba(255,255,255,.12); }
+.au-brand { display: flex; align-items: center; gap: 12px; padding-left: 8px; }
+.au-brand img { width: 36px; height: 36px; }
+.au-brand b { font-size: 17px; font-weight: 600; letter-spacing: .02em; }
+.au-sep { width: 1px; height: 22px; background: rgba(255,255,255,.35); margin: 0 6px; }
+.au-app { font-size: 16px; }
+.au-tools { margin-left: auto; display: flex; align-items: center; height: 100%; padding-right: 8px; }
+.au-tools > button, .au-pop-wrap > button { width: 60px; height: 60px; display: grid; place-items: center; border: 0; background: transparent; color: #fff; cursor: pointer; position: relative; }
+.au-tools > button:hover, .au-pop-wrap > button:hover, .au-pop-wrap > button.on { background: rgba(255,255,255,.14); }
+.au [data-tip] { position: relative; }
+.au [data-tip]:hover::after { content: attr(data-tip); position: absolute; top: calc(100% + 6px); left: 50%; transform: translateX(-50%); background: #393939; color: #fff; font-size: 12px; padding: 4px 10px; white-space: nowrap; border-radius: 2px; pointer-events: none; z-index: 60; }
+.au-tools [data-tip]:hover::after { top: calc(100% - 4px); }
+.au-tools .au-pop-wrap:last-child [data-tip]:hover::after { left: auto; right: 4px; transform: none; }
+.au-pop-wrap { position: relative; height: 100%; }
+.au-pop { position: absolute; right: 0; top: 100%; min-width: 240px; background: #fff; color: #161616; box-shadow: 0 6px 20px rgba(0,0,0,.22); padding: 8px 0; z-index: 70; }
+.au-pop p { margin: 4px 16px 8px; font-size: 12px; color: #6f6f6f; }
+.au-pop button { width: 100%; display: flex; align-items: center; gap: 10px; padding: 10px 16px; border: 0; background: transparent; font: inherit; text-align: left; cursor: pointer; color: #161616; }
+.au-pop button span { flex: 1; }
+.au-pop button:hover:not(:disabled) { background: #e8e8e8; }
+.au-pop button:disabled { cursor: default; color: #8d8d8d; }
+.au-pop button.cur { color: var(--au-bar); font-weight: 600; background: #edf3fb; }
+.au-pop button small { font-size: 12px; color: #6f6f6f; font-weight: 400; }
+.au-apps-portal { border-top: 1px solid #e0e0e0 !important; margin-top: 6px; color: var(--au-blue) !important; }
+.au-user { padding: 12px 0 6px; }
+.au-user b { display: block; padding: 0 16px; font-size: 14px; }
+.au-user small { display: block; padding: 2px 16px 10px; color: #6f6f6f; font-size: 12px; border-bottom: 1px solid #e0e0e0; }
+.au-body { flex: 1; min-height: 0; display: flex; position: relative; }
+.au-nav { width: var(--au-nav-w); flex: none; background: #fff; border-right: 1px solid #e0e0e0; display: flex; flex-direction: column; overflow: hidden; z-index: 20; transition: width .18s ease; }
+.au.nav-open .au-nav { position: absolute; left: 0; top: 0; bottom: 0; width: var(--au-nav-open); box-shadow: 4px 0 14px rgba(0,0,0,.12); }
+.au.nav-open .au-main { margin-left: var(--au-nav-w); }
+.au-scrim { position: absolute; inset: 0; z-index: 15; }
+.au-nav-search { height: 42px; flex: none; display: flex; align-items: center; gap: 12px; padding: 0 0 0 22px; color: #161616; }
+.au-nav-search input { flex: 1; min-width: 0; height: 40px; border: 2px solid var(--au-bar); padding: 0 10px; font: inherit; font-size: 15px; outline: none; }
+.au-nav-search button { position: absolute; left: 0; width: var(--au-nav-w); height: 42px; border: 0; background: transparent; cursor: pointer; }
+.au-nav hr { border: 0; border-top: 1px solid #e0e0e0; margin: 0; }
+.au-nav-row { width: 100%; height: 42px; flex: none; display: flex; align-items: center; gap: 16px; padding: 0 16px 0 22px; border: 0; border-left: 3px solid transparent; background: transparent; font: inherit; font-size: 16px; color: #161616; text-align: left; cursor: pointer; white-space: nowrap; }
+.au-nav-row span { flex: 1; overflow: hidden; text-overflow: ellipsis; }
+.au-nav-row:hover { background: #e8e8e8; }
+.au-nav-row.cur { background: #e5edf8; border-left-color: var(--au-bar); color: var(--au-bar); font-weight: 600; }
+.au-nav-row.in { color: var(--au-bar); }
+.au-chev { transition: transform .15s; color: #525252; }
+.au-chev.open { transform: rotate(180deg); }
+.au:not(.nav-open) .au-nav-row { padding-left: 19px; }
+.au:not(.nav-open) .au-nav-row span, .au:not(.nav-open) .au-nav .au-chev { display: none; }
+.au-nav-list { flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; padding-bottom: 12px; }
+.au-mod ul { list-style: none; margin: 0 0 4px; padding: 0; }
+.au-mod li button { width: 100%; display: flex; align-items: center; gap: 6px; padding: 8px 16px 8px 58px; border: 0; background: transparent; font: inherit; font-size: 14px; color: #393939; text-align: left; cursor: pointer; }
+.au-mod li button:hover { background: #e8e8e8; color: #161616; }
+.au-mod li button.cur { color: var(--au-bar); font-weight: 600; background: #edf3fb; }
+.au-mod.hl > .au-nav-row, .au-mod li button.hl { background: #fff3c4; box-shadow: inset 0 0 0 2px #f1c21b; animation: au-pulse 1s ease-in-out infinite alternate; }
+@keyframes au-pulse { from { box-shadow: inset 0 0 0 2px #f1c21b; } to { box-shadow: inset 0 0 0 2px rgba(241,194,27,.25); } }
+.au-nav-empty { padding: 12px 22px; color: #6f6f6f; }
+.au-main { flex: 1; min-width: 0; position: relative; overflow-y: auto; padding: 20px 40px 120px 20px; }
+.au-tabs-row { display: flex; }
+.au-tabs { display: flex; background: #f4f4f4; }
+.au-tabs button { height: 52px; padding: 0 20px; border: 0; border-bottom: 3px solid transparent; background: transparent; font: inherit; font-size: 19px; color: #393939; cursor: pointer; }
+.au-tabs button.on { color: var(--au-bar); font-weight: 600; border-bottom-color: var(--au-blue); background: #fff; }
+.au-tabs button:hover:not(.on) { background: #e8e8e8; }
+.au-tabs .au-tabs-more { padding: 0 16px; }
+.au-main::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 72px; background: #fff; z-index: 0; }
+.au-tabs-row, .au-sub-tools, .au-grid, .au-page { position: relative; z-index: 1; }
+.au-sub-tools { display: flex; justify-content: flex-end; gap: 4px; margin: 10px -20px 8px 0; }
+.au-sub-tools button, .au-ibtn { width: 32px; height: 32px; display: grid; place-items: center; border: 0; background: transparent; color: #161616; cursor: pointer; }
+.au-sub-tools button:hover, .au-ibtn:hover { background: #e0e0e0; }
+.au-grid { display: grid; grid-template-columns: minmax(300px, 480px) minmax(0, 1fr); gap: 20px; align-items: start; }
+.au-col { display: flex; flex-direction: column; gap: 22px; }
+.au-card { background: #fff; padding: 20px; }
+.au-card h3 { margin: 0 0 22px; font-size: 19px; font-weight: 400; }
+.au-launch { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; padding-bottom: 28px; }
+.au-launch h3 { margin-bottom: 14px; }
+.au-link { border: 0; background: transparent; padding: 0; font: inherit; font-size: 19px; color: var(--au-blue); cursor: pointer; text-align: left; }
+.au-link:hover { text-decoration: underline; }
+.au-mobile { background: #fff; padding: 6px 4px; margin-left: -18px; }
+.au-bulletin header { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+.au-bulletin header h3 { margin: 0 60px 0 0; }
+.au-ibtn.on { background: #c6c6c6; }
+.au-filter-link { display: inline-flex; align-items: center; gap: 10px; border: 0; background: transparent; font: inherit; font-size: 18px; color: var(--au-blue); cursor: pointer; }
+.au-bulletin table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+.au-bulletin th { background: #e0e0e0; text-align: left; font-weight: 400; font-size: 16px; padding: 10px; }
+.au-flt td { padding: 6px 22px 6px 2px; }
+.au-flt input { width: 100%; height: 48px; border: 1px solid #c6c6c6; border-radius: 3px; padding: 0 14px; font: inherit; font-size: 17px; }
+.au-flt input:focus { outline: 2px solid var(--au-blue); outline-offset: -2px; }
+.au-empty { margin: 22px 0 28px 60px; font-size: 16px; }
+.au-todo { padding-bottom: 20px; }
+.au-todo .au-empty { margin-top: 48px; }
+.au-page { padding-top: 24px; }
+.au-crumb { display: flex; align-items: center; gap: 6px; margin: 0 0 14px; color: #525252; }
+.au-crumb button { border: 0; background: transparent; padding: 0; font: inherit; color: var(--au-blue); cursor: pointer; }
+.au-fn h2 { margin: 0 0 10px; font-size: 22px; font-weight: 400; }
+.au-fn p { color: #525252; margin: 0 0 18px; }
+.au-back { display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 16px; border: 0; background: var(--au-blue); color: #fff; font: inherit; cursor: pointer; }
+.au-scenery { position: fixed; right: 0; bottom: 0; width: calc(100% - 60px); height: 230px; z-index: 0; pointer-events: none; }
+.au-main > .au-tabs-row, .au-main > .au-grid { z-index: 1; }
+/* 小幫手 */
+.ah-fab { position: fixed; right: 24px; bottom: 22px; width: 64px; height: 64px; border-radius: 50%; border: 0; background: var(--au-blue); color: #fff; display: grid; place-items: center; box-shadow: 0 6px 16px rgba(15,98,254,.35); cursor: pointer; z-index: 40; }
+.ah-fab:hover { background: #0353e9; }
+.ah { position: fixed; right: 24px; bottom: 100px; width: 500px; height: min(700px, calc(100vh - 180px)); display: flex; flex-direction: column; background: #fff; box-shadow: 0 10px 30px rgba(0,0,0,.25); z-index: 41; }
+.ah.big { width: min(900px, calc(100vw - 120px)); height: calc(100vh - 140px); bottom: 100px; }
+.ah-head { display: flex; align-items: center; gap: 4px; padding: 12px 8px 12px 18px; background: var(--au-blue); color: #fff; }
+.ah-head div { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.ah-head b { font-size: 17px; font-weight: 600; }
+.ah-head small { font-size: 13px; opacity: .92; }
+.ah-head button { width: 44px; height: 44px; display: grid; place-items: center; border: 0; background: transparent; color: #fff; cursor: pointer; }
+.ah-head button:hover { background: rgba(255,255,255,.16); }
+.ah-tabs { display: flex; border-bottom: 1px solid #e0e0e0; }
+.ah-tabs button { flex: 1; height: 44px; border: 0; border-bottom: 2px solid transparent; background: transparent; font: inherit; font-size: 15px; color: #525252; cursor: pointer; }
+.ah-tabs button.on { color: #161616; font-weight: 600; border-bottom-color: var(--au-blue); }
+.ah-list { flex: 1; min-height: 0; overflow-y: auto; padding: 16px 18px; display: flex; flex-direction: column; gap: 14px; background: #fff; }
+.ah-card { border: 1px solid #e0e0e0; padding: 14px 16px; background: #fff; line-height: 1.6; }
+.ah-card p { margin: 0; }
+.ah-hello p { font-size: 16px; }
+.ah-hello small { display: block; margin-top: 6px; color: #6f6f6f; font-size: 13.5px; }
+.ah-divider { margin: 0; text-align: center; color: #8d8d8d; font-size: 13.5px; }
+.ah-me { display: flex; justify-content: flex-end; }
+.ah-me span { background: var(--au-blue); color: #fff; padding: 9px 14px; font-size: 16px; max-width: 80%; }
+.ah-label { display: flex; align-items: center; gap: 6px; font-size: 13.5px; color: #525252; margin: 0 0 4px !important; }
+.ah-label + .ah-path, .ah-label + .ah-steps { margin-bottom: 10px !important; }
+.ah-pin { color: #da1e28; }
+.ah-feet { color: #6929c4; }
+.ah-path { font-size: 16px; display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
+.ah-chip { background: #edf5ff; color: var(--au-blue); padding: 1px 10px; }
+.ah-steps { margin: 0 0 12px; padding-left: 22px; font-size: 16px; }
+.ah-acts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.ah-btn { height: 36px; padding: 0 16px; border: 1px solid var(--au-blue); background: #fff; color: var(--au-blue); font: inherit; font-size: 14px; cursor: pointer; }
+.ah-btn.pri { background: var(--au-blue); color: #fff; }
+.ah-btn:hover { background: #edf5ff; } .ah-btn.pri:hover { background: #0353e9; }
+.ah-quick { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 14px 0; border-top: 1px solid #e0e0e0; }
+.ah-quick button { padding: 4px 12px; border: 0; border-radius: 14px; background: #e0e0e0; font: inherit; font-size: 13px; cursor: pointer; }
+.ah-quick button:hover { background: #c6c6c6; }
+.ah-input { display: flex; gap: 8px; padding: 10px 14px 14px; }
+.ah-input input { flex: 1; height: 44px; border: 2px solid var(--au-bar); padding: 0 12px; font: inherit; font-size: 16px; outline: none; }
+.ah-input button { width: 52px; border: 0; background: var(--au-blue); color: #fff; font: inherit; font-size: 16px; cursor: pointer; }
+.ah-empty { color: #6f6f6f; text-align: center; margin-top: 30px; }
+.ah-hist { list-style: none; margin: 0; padding: 0; }
+.ah-hist li + li { border-top: 1px solid #e0e0e0; }
+.ah-hist button { width: 100%; display: flex; flex-direction: column; gap: 2px; padding: 10px 4px; border: 0; background: transparent; text-align: left; font: inherit; cursor: pointer; }
+.ah-hist button:hover { background: #f4f4f4; }
+.ah-hist small { color: #6f6f6f; font-size: 12px; }
+.ah-clear { align-self: center; border: 0; background: transparent; color: var(--au-blue); font: inherit; cursor: pointer; }
+@media (max-width: 1100px) { .au-grid { grid-template-columns: 1fr; } .ah { width: calc(100vw - 48px); } }
+.au-pop-wrap > button.on:hover::after { display: none; }
+
+/* 11/20 使用者：審核會計系統調整——右上角登入者資訊（臺鐵藍底，同預算系統）、行距與比例依截圖 */
+.au-bar { height: 58px; background: #123d70; }
+.au-burger { height: 58px; }
+.au-tools { padding-right: 0; }
+.au-userblk { height: 58px; background: #00529c; padding: 0 8px 0 14px; margin-right: 4px; color: #fff; }
+.au-userblk .session-timer { border-left: 0; }
+.au-userblk .user-menu { color: #161616; }
+.au-pop-wrap > button { height: 58px; }
+.au-nav-row { font-size: 17px; height: 42.5px; }
+.au-mod li button { font-size: 15px; }
+.au-tabs button { font-size: 19px; font-weight: 600; }
+.au-tabs button:not(.on) { font-weight: 400; }
+.au-bulletin th { padding: 10px 8px; }
+.au-flt td { padding: 4px 22px 4px 0; }
+.au-flt td:last-child { padding-right: 20px; }
+.au-news td { padding: 6px 8px; font-size: 17px; color: #393939; vertical-align: middle; border-bottom: 1px solid #c6c6c6; }
+.au-news tr:last-child td { border-bottom: 0; }
+.au-news-subj { display: flex; align-items: center; gap: 8px; border: 0; background: transparent; padding: 0; font: inherit; font-size: 18px; color: #161616; text-align: left; cursor: pointer; }
+.au-news-subj .au-chev { color: #393939; transform: none; } .au-news-subj .au-chev.open { transform: rotate(180deg); }
+.au-news-msg { font-size: 15px !important; line-height: 1.4; }
+.au-news-v { color: #da1e28 !important; font-size: 16px !important; vertical-align: top !important; }
+.au-news-detail td { background: #f4f4f4; font-size: 15px; padding: 10px 14px 12px 34px; }
+.au-bulletin { padding-bottom: 24px; }
+.au-todo .au-empty { margin-top: 72px; margin-bottom: 34px; }
+
+/* 11/20 使用者：Portal 版2 公告跑馬燈（輪播前 5 筆、2.5 秒換一則） */
+.portal-news.is-ticker .pn-card { padding-top: 0; padding-bottom: 0; }
+.portal-news.is-ticker .card-head { margin: 0; padding: 12px 0; border-bottom: 0; gap: 16px; }
+.portal-news.is-ticker .card-head h2 { flex: none; margin: 0; }
+.pnt-track { position: relative; flex: 1; min-width: 0; height: 32px; overflow: hidden; display: flex; align-items: center; }
+.pnt-item { position: absolute; left: 0; right: 40px; top: 0; height: 32px; display: flex; align-items: center; gap: 10px; border: 0; background: transparent; padding: 0 0 0 16px; border-left: 1px solid var(--line, #e0e0e0); font: inherit; text-align: left; cursor: pointer; transform: translateY(100%); opacity: 0; transition: transform .45s ease, opacity .45s ease; }
+.pnt-item.on { transform: translateY(0); opacity: 1; }
+.pnt-item.out { transform: translateY(-100%); opacity: 0; }
+.pnt-item .pn-title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text, #161616); }
+.pnt-item:hover .pn-title { text-decoration: underline; color: var(--brand, #00529c); }
+.pnt-item .pn-date { flex: none; }
+.pnt-dots { position: absolute; right: 4px; top: 50%; transform: translateY(-50%); display: flex; gap: 4px; }
+.pnt-dots i { width: 5px; height: 5px; border-radius: 50%; background: #c6c6c6; }
+.pnt-dots i.on { background: var(--brand, #00529c); }
+
+.au-nav-row .au-ico, .au-nav-search .au-ico { width: 18px; height: 18px; }
+
+/* ═════ 11/20 使用者：最上面的 bar 全面改為 #004DA1（預算系統、Portal 各版、公告管理、審核會計） ═════ */
+.topbar { background: #004da1; }
+.pv3-top.is-blue { background: #004da1; color: #fff; border-bottom: 1px solid rgba(255,255,255,.18); }
+.pv3-top.is-blue .pv3o-suite { color: #fff; }
+.pv3-top.is-blue .brand-emblem { width: 34px; height: 34px; }
+.au-bar { background: #004da1; }
+.au-userblk { background: transparent; padding: 0 6px 0 0; }
+
+/* 11/20 使用者：審核會計的行距縮小為 70% */
+.au-main { padding-top: 14px; }
+.au-main::before { height: 50px; }
+.au-tabs button { height: 36px; padding: 0 14px; font-size: 17px; }
+.au-sub-tools { margin: 7px -20px 6px 0; }
+.au-sub-tools button, .au-ibtn { width: 28px; height: 28px; }
+.au-grid { gap: 14px; }
+.au-col { gap: 15px; }
+.au-card { padding: 14px 20px; }
+.au-card h3 { margin: 0 0 15px; font-size: 18px; }
+.au-launch { gap: 7px; padding-bottom: 20px; }
+.au-launch h3 { margin-bottom: 10px; }
+.au-link { font-size: 17px; }
+.au-mobile { padding: 4px 4px; }
+.au-bulletin header { margin-bottom: 10px; gap: 10px; }
+.au-filter-link { font-size: 16px; }
+.au-bulletin th { padding: 7px 8px; font-size: 15px; }
+.au-flt td { padding: 3px 22px 3px 0; }
+.au-flt input { height: 34px; font-size: 15px; }
+.au-news td { padding: 4px 8px; font-size: 15px; }
+.au-news-subj { font-size: 16px; }
+.au-news-msg { font-size: 14px !important; line-height: 1.3; }
+.au-news-v { font-size: 15px !important; }
+.au-news-detail td { padding: 7px 14px 8px 34px; font-size: 14px; }
+.au-bulletin { padding-bottom: 17px; }
+.au-empty { margin: 15px 0 20px 60px; }
+.au-todo { padding-bottom: 14px; }
+.au-todo .au-empty { margin-top: 50px; margin-bottom: 24px; }
+/* 11/20 使用者：左側功能列（bar）的行距復原，維持 42.5px／17px */
+
+/* ═════ 11/20 使用者：Portal、預算系統、審核會計三個 bar 的臺鐵標誌顏色、字體大小、篇幅一致（以預算系統為準） ═════ */
+.topbar .hamburger { background: transparent; }
+.topbar .hamburger:hover { background: rgba(255,255,255,.12); }
+.topbar .brand-emblem, .au-brand img, .pv3-top.is-blue .brand-emblem { width: 28px; height: 28px; }
+.topbar .brand-name, .au-brand b, .pv3-top.is-blue .pv3o-suite { font-size: 16px; font-weight: 600; letter-spacing: .08em; color: #fff; }
+.au-bar, .pv3-top.is-blue { height: var(--topbar-h); }
+.au-burger, .au-pop-wrap > button { width: 48px; height: var(--topbar-h); }
+.au-brand { padding-left: 20px; gap: 12px; }
+.au-app { font-size: 15px; }
+.au-pop-wrap, .au-tools .topbar-right { height: var(--topbar-h); }
+.pv3-top.is-blue { padding-left: 24px; gap: 12px; }
+
+/* 11/20 使用者：審核會計功能列滑鼠滑過要有顏色（淡藍底、藍字，依截圖） */
+.au-nav-row:hover, .au-mod li button:hover { background: #f0f5fc; color: #004da1; }
+.au-mod li button { border-radius: 4px; width: calc(100% - 8px); margin-left: 4px; }
+.au-nav-row.cur, .au-nav-row.cur:hover { background: #e8f1fd; }
+.au-mod li button { font-size: 17px; color: #262626; padding: 9px 16px 9px 70px; }
+
+/* 11/23 使用者：滑過時看不出變色 → 加深底色、文字與圖示變藍並加左側藍條，明顯可見 */
+.au-nav-row, .au-mod li button { transition: background-color .12s ease, color .12s ease; }
+.au .au-nav .au-nav-row:hover { background: #dce8f8; color: #004da1; border-left-color: #004da1; }
+.au .au-nav .au-mod li button:hover { background: #dce8f8; color: #004da1; font-weight: 600; }
+.au .au-nav .au-nav-row:hover .au-ico, .au .au-nav .au-nav-row:hover .au-chev { color: #004da1; }
+.au .au-nav .au-nav-row.cur:hover { background: #d3e2f6; }
+
+/* 11/23 使用者：版3-1 公告輪播放進列車輪播（主視覺）下方，畫面不用捲動 */
+.hero-news { position: absolute; z-index: 2; left: max(32px, calc((100% - 1160px) / 2 + 32px)); bottom: 44px; width: min(760px, calc(100% - 64px)); height: 44px; display: flex; align-items: center; gap: 12px; padding: 0 8px 0 14px; background: rgba(255,255,255,.92); border-radius: 22px; box-shadow: 0 4px 16px rgba(0,30,70,.18); backdrop-filter: blur(4px); }
+.hero-news-label { flex: none; display: inline-flex; align-items: center; gap: 6px; font-weight: 600; color: var(--trc-blue, #004da1); font-size: 14px; }
+.hero-news .pnt-track { height: 32px; }
+.hero-news .pnt-item { font-size: 14px; }
+.hero-news-all { flex: none; height: 30px; padding: 0 12px; border: 0; border-radius: 15px; background: #e8f0fa; color: var(--trc-blue, #004da1); font: inherit; font-size: 13px; cursor: pointer; }
+.hero-news-all:hover { background: #d6e4f6; }
+@media (max-width: 760px) { .hero-news-label { display: none; } }
+@media (max-height: 800px) { .pv3o1 .pv2-hero { height: 292px; } .pv3o1 .hero-news { bottom: 38px; } .pv3o1 .pv2-hero-text { top: 36px; } }
+
+/* 11/23 使用者：版3-1 公告輪播放在原「XXX，您好」的位置 */
+.pv3o1 .pv2-hero-text { width: min(760px, calc(100% - 64px)); max-width: none; }
+.pv3o1 .pv2-hero-text .hero-news { position: static; width: 100%; margin: 12px 0 16px; }
+/* 11/23 使用者：審核會計頂列加入切換系統（同預算系統） */
+.au-switch { display: flex; align-items: center; height: 100%; padding-left: 0; margin-left: 20px; border-left: 1px solid rgba(255,255,255,.18); }
+.au-switch .switcher-panel { color: #161616; }
+
+.au-news td:nth-child(3), .au-news td:nth-child(4) { white-space: nowrap; font-size: 14px; }
+.au .sys-switch { border-radius: 0 !important; height: 32px; }
+
+/* ═════ 11/24 使用者：審核會計左側功能列配色比照預算模組（藍底白字）；首頁頁籤改名「首頁」並加底色 ═════ */
+.au .au-nav { background: #00529c; border-right: 0; color: #fff; }
+.au .au-nav hr { border-top-color: rgba(255,255,255,.2); }
+.au .au-nav-search { color: #fff; }
+.au .au-nav-search input { background: #fff; color: #161616; border-color: #fff; }
+.au .au-nav .au-nav-row { color: #fff; }
+.au .au-nav .au-chev { color: rgba(255,255,255,.85); }
+.au .au-nav .au-mod li button { color: rgba(255,255,255,.92); }
+.au .au-nav .au-nav-row.cur, .au .au-nav .au-nav-row.cur:hover { background: rgba(0,0,0,.22); color: #fff; border-left-color: #fff; }
+.au .au-nav .au-nav-row.in { color: #fff; }
+.au .au-nav .au-nav-row:hover { background: rgba(255,255,255,.14); color: #fff; border-left-color: rgba(255,255,255,.7); }
+.au .au-nav .au-nav-row:hover .au-ico, .au .au-nav .au-nav-row:hover .au-chev { color: #fff; }
+.au .au-nav .au-mod li button:hover { background: rgba(255,255,255,.14); color: #fff; }
+.au .au-nav .au-mod li button.cur { background: rgba(0,0,0,.22); color: #fff; }
+.au .au-nav .au-nav-empty { color: rgba(255,255,255,.8); }
+.au .au-nav .au-mod.hl > .au-nav-row, .au .au-nav .au-mod li button.hl { background: rgba(241,194,27,.35); color: #fff; }
+.au.nav-open .au-nav { box-shadow: 4px 0 14px rgba(0,0,0,.25); }
+.au-nav-list { scrollbar-color: rgba(255,255,255,.35) transparent; }
+/* 頁籤：目前所在的頁籤有底色，其他頁籤灰底，日後新增頁籤可以區分 */
+.au .au-tabs { gap: 2px; background: transparent; }
+.au .au-tabs button { background: #e8e8e8; color: #525252; font-weight: 400; }
+.au .au-tabs button.on { background: #dbe7f7; color: #004da1; font-weight: 600; border-bottom-color: #004da1; }
+.au .au-tabs button:hover:not(.on) { background: #d6d6d6; }
+.au .au-tabs .au-tabs-more { background: #e8e8e8; }
+/* 11/24 版2-2：版2 的底＋版1 的入口卡片 */
+.pv22 .pv22-cards { margin-top: 0; }
+.pv22 .pv22-cards .portal-card { text-align: left; }
+.wb-banner-pick { margin-left: auto; display: inline-flex; align-items: center; gap: 8px; font-size: 13px; }
+
+/* 11/24 使用者：審核會計卡片標題（動支、預算、總帳、公佈欄、待辦事項）改粗體 */
+.au-card h3 { font-weight: 600; }
+/* 11/24 使用者：版2-2 上半部套用版2-1（大圖、公告輪播取代問候） */
+.pv22 .pv2-main { padding-top: 20px; }
+.pv22 .pv2-main { padding-top: 14px !important; }
+.pv22 .pv2-h2 { margin-bottom: 12px; }
+.pv22 .pv22-cards .portal-card { padding-top: 18px; padding-bottom: 18px; min-height: 0; }
+.pv22 .pv22-cards .portal-desc { margin-bottom: 6px; }
+@media (max-height: 800px) {
+  .pv22 .pv22-cards .portal-card { padding-top: 14px; padding-bottom: 14px; gap: 6px; }
+  .pv22 .pv22-cards .portal-ico { width: 44px; height: 44px; }
+  .pv22 .pv22-cards .pp-num { font-size: 40px; line-height: 1; }
+  .pv22 .pv22-cards .portal-name { font-size: 20px; margin-top: 2px; }
+  .pv22 .pv2-h2 { margin-bottom: 8px; }
+}
+@media (max-height: 800px) { .pv22.pv3o1 .pv2-hero { height: 262px; } .pv22 .pv22-cards .portal-card-top { margin-bottom: 0; } }
+.au-news td:nth-child(3), .au-news td:nth-child(4) { font-size: 13px; }
+/* 11/24 使用者截圖：功能列模組名稱為半粗體 */
+.au .au-nav .au-nav-row span { font-weight: 600; }
+
+/* ═════ 11/24 審核會計：非工程動支請示登錄（清單頁＋明細頁） ═════ */
+.au.in-app .au-main { padding: 0; overflow: hidden; display: flex; flex-direction: column; }
+.au.in-app .au-main::before { display: none; }
+.au.nav-locked .au-scenery { width: 100%; }
+.dz { position: relative; z-index: 1; flex: 1; min-height: 0; display: flex; flex-direction: column; font-size: 15px; color: #161616; }
+.dz-crumb { flex: none; height: 44px; display: flex; align-items: center; gap: 8px; padding: 0 18px; background: #fff; border-bottom: 1px solid #c6c6c6; }
+.dz-crumb > button { border: 0; background: none; padding: 0; font: inherit; color: var(--au-blue); text-decoration: underline; cursor: pointer; }
+.dz-crumb-r { margin-left: auto; display: flex; gap: 36px; }
+.dz-crumb-r button { border: 0; background: none; font: inherit; font-size: 14px; color: var(--au-blue); cursor: pointer; }
+.dz-title { flex: none; height: 68px; display: flex; align-items: center; padding: 0 16px; background: #fff; }
+.dz-title h1 { margin: 0; font-size: 26px; font-weight: 400; letter-spacing: .02em; }
+.dz-title-tools { margin-left: auto; display: flex; align-items: center; gap: 2px; }
+.dz-vsep { width: 1px; height: 34px; background: #c6c6c6; margin: 0 14px; }
+.dz-ibtn { width: 32px; height: 32px; display: grid; place-items: center; border: 0; background: transparent; color: #161616; cursor: pointer; position: relative; }
+.dz-ibtn:hover:not(:disabled) { background: #e0e0e0; }
+.dz-ibtn:disabled { color: #c6c6c6; cursor: default; }
+.dz-ibtn.on { background: #c6c6c6; }
+.dz-body { flex: 1; min-height: 0; display: flex; }
+.dz-side { width: 254px; flex: none; background: #fff; border-right: 1px solid #e0e0e0; padding: 14px 16px 20px 6px; overflow-y: auto; }
+.dz-side.mini { width: 44px; padding: 14px 6px; }
+.dz-side-top { display: flex; align-items: center; justify-content: space-between; min-height: 32px; margin-bottom: 8px; }
+.dz-back { display: inline-flex; align-items: center; gap: 12px; border: 0; background: none; padding: 0 0 0 14px; font: inherit; font-size: 13px; color: var(--au-blue); cursor: pointer; }
+.dz-side-search { display: flex; align-items: center; gap: 8px; height: 34px; padding: 0 12px; background: #f4f4f4; color: #6f6f6f; margin-bottom: 16px; }
+.dz-side-search input { flex: 1; min-width: 0; border: 0; background: transparent; font: inherit; outline: none; }
+.dz-side-q { width: 100%; height: 34px; display: flex; align-items: center; justify-content: space-between; padding: 0 12px 0 16px; border: 0; border-bottom: 1px solid #8d8d8d; background: #f4f4f4; font: inherit; cursor: pointer; margin-bottom: 26px; }
+.dz-side-h { margin: 0 0 12px 16px; font-size: 12px; color: #161616; }
+.dz-act { width: 100%; display: flex; align-items: center; gap: 16px; padding: 6px 8px 6px 16px; border: 0; background: none; font: inherit; color: var(--au-blue); text-align: left; cursor: pointer; margin-bottom: 4px; }
+.dz-act .au-ico { color: #161616; }
+.dz-act.plain { padding-left: 20px; }
+.dz-act:hover:not(:disabled) { background: #edf3fb; }
+.dz-act:disabled { color: #a8c3f0; cursor: default; }
+.dz-act:disabled .au-ico { color: #c6c6c6; }
+.dz-act + .dz-side-h { margin-top: 18px; }
+.dz-content { flex: 1; min-width: 0; overflow: auto; padding: 22px 16px 120px; }
+.dz-content.detail { padding: 0 0 120px; }
+.dz-btn { display: inline-flex; align-items: center; height: 40px; padding: 0 18px; border: 0; background: #1d5fae; color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
+.dz-btn:hover { background: #15396b; }
+.dz-btn.sm { height: 38px; padding: 0 20px; margin-left: auto; }
+.dz-tlink { display: block; border: 0; background: none; padding: 2px 3px; margin: 4px 0 14px; font: inherit; color: var(--au-blue); text-decoration: underline; cursor: pointer; }
+.dz-table { background: #fff; }
+.dz-table > header { display: flex; align-items: center; height: 52px; padding: 0 18px; }
+.dz-table > header > div { margin-left: auto; display: flex; gap: 16px; }
+.dz-table > footer { padding: 12px 18px; border-top: 1px solid #e0e0e0; color: #393939; }
+.dz-scroll { overflow-x: auto; }
+.dz-table table { width: 100%; border-collapse: collapse; white-space: nowrap; }
+.dz-table th { background: #e5edf8; text-align: left; font-weight: 700; padding: 11px 10px; font-size: 15px; }
+.dz-table th:first-child, .dz-table td:first-child { padding-left: 36px; }
+.dz-table td { padding: 12px 10px; border-bottom: 1px solid #e0e0e0; color: #1d5fae; }
+.dz-table .num { text-align: right; }
+.dz-table tbody tr { cursor: pointer; }
+.dz-table tbody tr:hover td { background: #edf3fb; }
+.dz-table tbody tr:hover td:first-child { box-shadow: inset 3px 0 0 var(--au-blue); }
+.dz-rowlink { border: 0; background: none; padding: 0; font: inherit; color: inherit; cursor: pointer; }
+.dz-rowlink:hover { text-decoration: underline; }
+.dz-bm { width: 44px; padding: 4px !important; }
+.dz-flt th { background: #f4f4f4; padding: 6px 6px; }
+.dz-flt input { width: 100%; min-width: 60px; height: 30px; border: 1px solid #c6c6c6; padding: 0 6px; font: inherit; font-size: 13px; }
+.dz-none { padding: 18px 36px; color: #525252; }
+/* 明細頁 */
+.dz-tabs { display: flex; align-items: flex-end; height: 48px; background: #f4f4f4; position: sticky; top: 0; z-index: 2; }
+.dz-tabs button { height: 42px; padding: 0 14px; border: 0; border-bottom: 3px solid transparent; background: #e8e8e8; margin-right: 2px; font: inherit; color: #393939; cursor: pointer; }
+.dz-tabs button.on { color: #1d5fae; font-weight: 700; border-bottom-color: #1d5fae; background: #f4f4f4; }
+.dz-tabs button:hover:not(.on) { background: #dcdcdc; }
+.dz-tabs .dz-tabs-more { background: transparent; padding: 0 10px; }
+.dz-panel { background: #fff; padding: 14px 0 12px; }
+.dz-btns { display: flex; gap: 18px; padding: 0 0 18px; }
+.dz-form { display: grid; grid-template-columns: repeat(3, max-content); column-gap: 40px; padding-right: 20px; }
+.dz-fcol { display: flex; flex-direction: column; gap: 15px; }
+.dz-f { display: flex; align-items: center; gap: 10px; }
+.dz-f > label { width: 106px; text-align: right; font-size: 15px; color: #393939; padding-top: 6px; white-space: nowrap; }
+.dz-f > label i { color: #da1e28; font-style: normal; margin-right: 2px; }
+.dz-fv { display: flex; gap: 8px; align-items: center; }
+.dz-in { position: relative; display: inline-flex; align-items: center; height: 40px; width: 122px; border: 1px solid #c6c6c6; background: #fff; }
+.dz-in input, .dz-in select { width: 100%; height: 100%; border: 0; background: transparent; padding: 0 8px; font: inherit; color: #161616; outline: none; min-width: 0; }
+.dz-in .au-ico { flex: none; margin-right: 8px; }
+.dz-in.ro { background: #edf1f6; }
+.dz-in.num input { text-align: right; }
+.dz-in:focus-within:not(.ro) { outline: 2px solid var(--au-blue); outline-offset: -2px; }
+.dz-subtabs { display: flex; padding: 30px 0 0; background: #f2f4f8; }
+.dz-subtabs.in { padding: 6px 0 0; background: #f2f4f8; margin: 8px -4px 0; }
+.dz-subtabs button { height: 40px; padding: 0 12px; border: 0; border-bottom: 3px solid #1d5fae; background: #e5edf8; font: inherit; font-weight: 700; color: #1d5fae; }
+.dz-lines { table-layout: fixed; width: max-content !important; }
+.dz-lines td { padding: 4px 10px !important; color: #161616; cursor: default; }
+.dz-lines td:first-child { padding-left: 20px !important; }
+.dz-lines tbody tr:hover td { background: #f6f9fd; }
+.dz-lines .dz-in { width: 100%; }
+.dz-card { background: #fff; padding: 14px 4px 18px; max-width: 100%; }
+.dz-inline { display: flex; align-items: center; gap: 22px; padding: 0 0 12px; }
+.dz-inline .dz-f > label, .dz-q .dz-f > label, .dz-q2 .dz-f > label { width: auto; min-width: 64px; }
+.dz-table.flat > header { padding-left: 18px; }
+.dz-table.flat th:first-child { padding-left: 20px; }
+.dz-emptybox { padding: 30px 0 30px 68px; color: #525252; }
+.dz-emptybox .au-ico { color: #8d8d8d; margin-left: 6px; }
+.dz-q { display: grid; grid-template-columns: repeat(2, max-content); gap: 14px 20px; padding: 14px 0 4px; background: #fff; }
+.dz-q2 { display: grid; grid-template-columns: repeat(2, max-content); gap: 14px 22px; }
+@media (max-width: 1500px) {
+  .dz-form { grid-template-columns: repeat(2, max-content); row-gap: 15px; }
+}
+.dz-side { width: 236px; }
+.dz-side-srow { display: flex; align-items: center; gap: 4px; margin-bottom: 16px; }
+.dz-side-srow .dz-side-search { flex: 1; margin-bottom: 0; }
+.dz-form { column-gap: 26px; }
+.dz-f > label { width: 96px; }
+@media (max-width: 1500px) { .dz-form { grid-template-columns: repeat(3, max-content); } }
+@media (max-width: 1340px) { .dz-form { grid-template-columns: repeat(2, max-content); } }
+
+/* 11/24 動支：B 固資／C 材料明細頁、審核／審查開關；明細頁選單按鈕按了無作用（外觀不變） */
+.dz-tg { width: 46px; height: 22px; border-radius: 11px; border: 0; background: #8d8d8d; position: relative; cursor: pointer; padding: 0; flex: none; }
+.dz-tg span { position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; transition: left .15s; }
+.dz-tg.on { background: #24a148; }
+.dz-tg.on span { left: 27px; }
+.dz-star { color: #da1e28; font-style: normal; font-size: 18px; margin: 0 -2px 0 2px; }
+.dz-gapx { width: 50px; flex: none; }
+.dz-form.asset { column-gap: 30px; }
+.dz-form.asset .dz-f > label { width: 96px; }
+.dz-form.asset .dz-fcol:nth-child(3) .dz-f > label { width: 124px; }
+.dz-need { margin-top: 12px; padding: 14px 0; }
+.dz-gap-row { height: 14px; }
+.dz-lines td .dz-tg { margin: 0 auto; display: block; }
+@media (max-width: 1340px) { .dz-form.asset { grid-template-columns: repeat(2, max-content); row-gap: 15px; } }
+/* 11/24 使用者：動支明細頁左側動作欄行距縮小，比照現行畫面（每列約 34px、更多動作約 32px） */
+.dz-side { padding-top: 10px; }
+.dz-side-top { margin-bottom: 4px; }
+.dz-side-srow { margin-bottom: 14px; }
+.dz-side-q { margin-bottom: 24px; }
+.dz-side-h { margin-bottom: 6px; }
+.dz-act { padding: 5px 8px 5px 16px; margin-bottom: 0; line-height: 24px; }
+.dz-act.plain { padding-top: 4px; padding-bottom: 4px; }
+.dz-act + .dz-side-h { margin-top: 8px; }
+.wb-fieldtbl select.wb-unitpick { background: #fff8d6; font-weight: 600; } /* 11/24 彙整檢視：預算單位名稱可下拉切換 */
+/* 11/24 使用者附圖：公佈欄配色——表頭淡藍灰底＋臺鐵藍底線，過濾輸入框淡藍灰框線、圓角 */
+.au-bulletin th { background: #edf2f8; color: #393939; border-bottom: 2px solid #004da1; }
+.au-flt td { padding-top: 8px; padding-bottom: 8px; }
+.au-flt input { border: 1px solid #c5d1e0; border-radius: 6px; background: #fff; }
+.au-flt input:hover { border-color: #8fa6c4; }
+.au-news td { border-bottom-color: #dbe3ee; }
+.au-ibtn.on { background: #c6c6c6; }
+.au-filter-link { color: #0f62fe; font-weight: 600; }
+.au-bulletin thead th { box-shadow: inset 0 -2px 0 #004da1; } .au-filter-link .au-ico { color: #8d8d8d; }
+.au-brand-btn { border: 0; background: transparent; color: inherit; font: inherit; cursor: pointer; height: 100%; padding-right: 12px; } .au-brand-btn:hover { background: rgba(255,255,255,.1); }
+/* 11/24 使用者：公佈欄表頭藍色底線調細為 1px */ .au-bulletin th, .au-bulletin thead th { border-bottom: 0; box-shadow: inset 0 -1px 0 #004da1; }
+/* 11/24 使用者：版2-1 車票與頁尾之間留白，不要蓋到頁尾 */ .pv3o1:not(.pv22) .pv2-main { padding-bottom: 28px; }
+@media (max-height: 800px) { .pv3o1:not(.pv22) .pv2-main { padding-bottom: 20px; } .pv3o1:not(.pv22) .pv2-hero { height: 266px; } }
