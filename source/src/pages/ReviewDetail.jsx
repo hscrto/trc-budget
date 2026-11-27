@@ -251,7 +251,7 @@ export default function ReviewDetailPage({ id }) {
   // 簽核歷程：計畫、狀態、目前關卡、現在要處理（批准人）、資料時間；點計畫名稱看流程圖
   const FLOW = { id: 'rd-flow', name: '簽核歷程', custom: 'render', render: () => <SignFlow rec={rec} chain={chain} /> };
 
-  const workbook = { sections: [{ id: 'task', name: '資產', open: true, assets: [{ id: 'cost', name: '費用明細表', kind: 'book', sheets: [ICT_SUMMARY, PIVOT, ICT_ADJUST, FLOW] }] }] };
+  const workbook = { sections: [{ id: 'task', name: '資產', open: true, assets: [{ id: 'cost', name: '費用明細表', kind: 'book', sheets: [ICT_SUMMARY, PIVOT, ICT_ADJUST] } /* 11/27 使用者：移除簽核歷程頁籤 */] }] };
   const me = chain[0];
   const approver = rec.kind === 'in' ? { name: rec.approver || user?.name, unit: rec.approverUnit } : { name: me.approver, unit: me.approverUnit };
 

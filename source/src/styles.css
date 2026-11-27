@@ -3689,3 +3689,14 @@ td.ph-name small { display: block; margin-left: 24px; font-size: 12px; color: #5
 /* 11/24 使用者：版2-1 車票與頁尾之間留白，不要蓋到頁尾 */ .pv3o1:not(.pv22) .pv2-main { padding-bottom: 28px; }
 @media (max-height: 800px) { .pv3o1:not(.pv22) .pv2-main { padding-bottom: 20px; } .pv3o1:not(.pv22) .pv2-hero { height: 266px; } }
 /* 11/24 移除「[示範調整] D 類工程」後，按鈕與清單之間留間距 */ .dz-content > .dz-btn + .dz-table { margin-top: 16px; }
+/* 11/27 使用者：明細表左側「核准作業」頁籤文字行距縮小，下方亮藍色「核准 / 拒絕」按鈕要完整露出 */
+.rdp-h { padding: 8px 8px 8px 16px; }
+.rdp-tabs button { height: 40px; }
+.rdp-body { padding: 4px 16px 12px; line-height: 1.35; }
+.rdp-body h3 { margin: 10px 0 6px; }
+.rdp-label { margin-bottom: 4px; }
+.rdp-select { height: 36px; }
+.rdp-dl { gap: 8px 8px; margin: 12px 0 4px; }
+.rdp-dl dd small { line-height: 1.35; }
+.rdp-body .wb-asset { min-height: 34px; padding-top: 4px; padding-bottom: 4px; }
+.rdp-submit { position: sticky; bottom: 0; z-index: 2; flex: none; }

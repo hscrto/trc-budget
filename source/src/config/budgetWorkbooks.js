@@ -304,7 +304,7 @@ const planNames = (ctx) => ctx.listOf('names', 'name');
 // 出國計畫名稱設定：輸入新計畫名稱 → 按「計畫名稱新增」→ 加到下方清單，各頁籤的「計畫名稱」可以選
 const NAMES_SHEET = {
   toolbar: 'basic', // 11/19 PAW 截圖：這張只有一般工具列
-  id: 'names', name: '出國計畫名稱設定', setting: true, tone: 'orange', title: '出國計畫名稱設定', noTitle: true, custom: 'nameForm',
+  id: 'names', name: '出國計畫名稱設定', setting: true, title: '出國計畫名稱設定', noTitle: true, custom: 'nameForm',
   form: { caption: '出國計畫名稱設定', label: '新計畫名稱建立', button: '計畫名稱新增', col: 'name', listCaption: '已建立的計畫名稱', ddLabel: '計畫名稱' },
   grid: {
     head: [[H('計畫名稱')]],
@@ -319,7 +319,7 @@ const BUDGET_STD = [['fare', '交通費'], ['live', '生活費'], ['office', '�
 const STUDY_OPT = { noContent: true, budget: [['live', '生活費'], ['air', '機票']] };
 const tripSheet = (id, name, type, capex, mid, acct, opt = {}) => ({
   ...(opt.toolbar ? { toolbar: opt.toolbar } : {}),
-  id, name, tone: 'orange', title: `派員出國計畫預算類別表－${type}${capex ? '（資本支出）' : ''}`,
+  id, name, title: `派員出國計畫預算類別表－${type}${capex ? '（資本支出）' : ''}`,
   fields: [{ label: '版本', dd: TRIP_VERSIONS, v: '公司概算版' }, F.year, ...(type !== '考察、視察、訪問' ? [F.unitName, F.unitCode] : [F.unitCode, F.unitName]), F.acct(acct), { label: '計畫名稱', ddFrom: planNames, v: '' }],
   side: [
     { key: 'adj', label: '調整後金額', fmt: 'num' },
@@ -352,7 +352,7 @@ function dayDiff(a, b) {
 // 出國計畫合併設定：把來源單位的計畫併入另一單位的計畫（例：MPY00 → MMY20）
 const mergeSheet = {
   toolbar: 'basic', // 11/19 PAW 截圖：這張只有一般工具列
-  id: 'merge', name: '出國計畫合併設定', setting: true, tone: 'orange', title: '出國計畫合併設定', noTitle: true, caption: '出國計畫合併設定',
+  id: 'merge', name: '出國計畫合併設定', setting: true, title: '出國計畫合併設定', noTitle: true, caption: '出國計畫合併設定',
   fields: [{ label: '預算版本', dd: TRIP_VERSIONS.slice(0, 5), v: '公司概算版' }, { label: '預算年度', dd: YEARS, v: '116' }],
   action: '合併出國計畫', actionMsg: '已依下表把來源單位的出國計畫併入指定單位的計畫。',
   grid: {
@@ -527,7 +527,7 @@ export const WORKBOOKS = {
   ict: {
     sections: [
       { id: 'collect', name: '資通訊彙集表', open: true, assets: [
-        { id: 'ict-cost', name: '費用明細表', kind: 'book', sheets: [ICT_SUMMARY, ICT_DETAIL, ICT_ADJUST, ICT_HISTORY] },
+        { id: 'ict-cost', name: '費用明細表', kind: 'book', sheets: [ICT_SUMMARY, ICT_DETAIL, ICT_ADJUST] } /* 11/27 移除簽核歷程 */,
       ] },
       // 11/19 使用者：資通訊設定檔只有一個資產「08_資通訊計畫項目設定」；報部表件也是一本「費用明細表」
       { id: 'setting', name: '資通訊設定檔', open: true, assets: [
@@ -536,7 +536,7 @@ export const WORKBOOKS = {
           [['IT01', '伺服器維護', '機修費', '台', 85000, ''], ['IT02', '網路設備維護', '機修費', '台', 12000, ''], ['IT03', '機房用電', '電費', '式', '', ''], ['IT04', '車載通訊設備維修', '交修費', '組', 35000, '']])] },
       ] },
       { id: 'report', name: '報部表件', open: true, assets: [
-        { id: 'ict-report', name: '費用明細表', kind: 'book', sheets: [ICT_SUMMARY, ICT_DETAIL, ICT_ADJUST, ICT_HISTORY] },
+        { id: 'ict-report', name: '費用明細表', kind: 'book', sheets: [ICT_SUMMARY, ICT_DETAIL, ICT_ADJUST] } /* 11/27 移除簽核歷程 */,
       ] },
     ],
   },
